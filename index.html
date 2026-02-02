@@ -45,6 +45,21 @@
       box-shadow: var(--shadow2);
       cursor:pointer;
     }
+
+    /* NEW: subtle LINE button (shows only on onsite flow) */
+    .lineBtn{
+      height:var(--tap); width:var(--tap);
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:12px;
+      display:flex; align-items:center; justify-content:center;
+      box-shadow: var(--shadow2);
+      cursor:pointer;
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+
     .rightIcons{display:flex; justify-content:flex-end; gap:8px;}
     .logo{
       text-align:center; font-weight:700; letter-spacing:.2px;
@@ -233,6 +248,10 @@
         <div class="logo" id="btnHome" title="回首頁">名根烤肉</div>
         <div class="rightIcons">
           <button class="iconBtn" id="btnSearch" aria-label="搜尋">🔍</button>
+
+          <!-- NEW: shows only on /onsite-service and onsite products -->
+          <button class="lineBtn" id="btnLine" aria-label="LINE 支援" title="LINE 支援" style="display:none;">LINE</button>
+
           <button class="iconBtn" id="btnCart" aria-label="購物車">🛒</button>
         </div>
       </div>
@@ -297,6 +316,9 @@
     ],
     searchIndex: []
   };
+
+  // NEW: Replace with your real LINE OA URL
+  const LINE_URL = "https://line.me/R/ti/p/@YOUR_LINE_ID";
 
   function money(n){ return "NT$ " + n.toLocaleString("en-US"); }
 
@@ -368,6 +390,18 @@
   const barMeta = document.getElementById("barMeta");
   const barPrimary = document.getElementById("barPrimary");
 
+  // Header buttons
+  const btnMenu = document.getElementById("btnMenu");
+  const btnHome = document.getElementById("btnHome");
+  const btnSearch = document.getElementById("btnSearch");
+  const btnLine = document.getElementById("btnLine"); // NEW
+  const btnCart = document.getElementById("btnCart");
+  const drawer = document.getElementById("drawer");
+  const backdrop = document.getElementById("backdrop");
+
+  // NEW: header LINE click
+  btnLine.onclick = ()=> window.open(LINE_URL, "_blank");
+
   // UPDATED: single-action Bottom Bar
   function setBottomBar(cfg){
     if(!cfg){
@@ -386,6 +420,12 @@
     const pageFn = routes[path] || pageHome;
     root.innerHTML = "";
     setBottomBar(null);
+
+    // NEW: show LINE only on onsite LP + onsite product pages
+    const isOnsiteLP = path === "/onsite-service";
+    const isOnsiteProduct = (path === "/product/:id") && state.services.some(s => s.id === params.id);
+    btnLine.style.display = (isOnsiteLP || isOnsiteProduct) ? "flex" : "none";
+
     pageFn(root, params);
     syncCartBadge();
   }
@@ -445,7 +485,7 @@
     wrap.querySelector("#goOnsite").onclick = ()=>go("/onsite-service");
     wrap.querySelector("#goFaq").onclick = ()=>go("/faq");
 
-    // UPDATED: pick ONE "next step" only
+    // pick ONE "next step" only
     setBottomBar({
       title:"首頁",
       meta:"先選路徑",
@@ -565,6 +605,18 @@
         <div id="svcList"></div>
       </div>
 
+      <!-- NEW: onsite-only LINE helper card (low-key) -->
+      <div class="section card">
+        <div class="pad">
+          <div class="kicker">快速確認（選用）</div>
+          <div class="sub" style="margin:6px 0 10px;">
+            想先確認檔期／場地限制？可以用 LINE 快速說明，我們會回你可行方案。
+          </div>
+          <button class="btn btnWide" id="goLineHelp">用 LINE 快速確認</button>
+          <div class="mini" style="margin-top:8px;">提醒：下單仍在網站完成，LINE 用來確認細節。</div>
+        </div>
+      </div>
+
       <div class="section card">
         <div class="pad">
           <div class="kicker">服務流程（4 步驟）</div>
@@ -590,6 +642,9 @@
       </div>
     `;
     el.appendChild(wrap);
+
+    // NEW: onsite LINE card click
+    wrap.querySelector("#goLineHelp").onclick = ()=> window.open(LINE_URL, "_blank");
 
     const list = wrap.querySelector("#svcList");
     list.innerHTML = state.services.map(s => `
@@ -724,7 +779,7 @@
     el.appendChild(wrap);
     wrap.querySelector("#goContact").onclick = ()=>go("/contact");
 
-    // low priority: hide bottom bar on FAQ (UPDATED)
+    // hide bottom bar on FAQ (focus)
     setBottomBar(null);
   }
 
@@ -830,7 +885,7 @@
       render();
     };
 
-    // UPDATED: hide bottom bar on Checkout (focus)
+    // hide bottom bar on Checkout (focus)
     setBottomBar(null);
   }
 
@@ -864,6 +919,16 @@
           </ul>
           <button class="btn btnPrimary btnWide" id="add">加入購物車</button>
           <button class="btn btnWide" style="margin-top:10px;" id="goCompare">前往方案比較</button>
+
+          ${item.type==="service" ? `
+            <div class="hr"></div>
+            <div class="note">
+              <b>想先確認檔期／場地？</b><br/>
+              可以用 LINE 快速說明，我們會回你適合的方案。<br/>
+              <button class="btn btnWide" style="margin-top:10px;" id="goLineHelp2">用 LINE 快速確認</button>
+              <div class="mini" style="margin-top:8px;">下單仍在網站完成，LINE 用來確認細節。</div>
+            </div>
+          ` : ``}
         </div>
       </div>
 
@@ -877,6 +942,10 @@
 
     wrap.querySelector("#add").onclick = ()=>addToCart(item);
     wrap.querySelector("#goCompare").onclick = ()=>go("/comparison");
+
+    // onsite product LINE helper
+    const go2 = wrap.querySelector("#goLineHelp2");
+    if(go2) go2.onclick = ()=> window.open(LINE_URL, "_blank");
 
     setBottomBar({
       title:"商品頁",
@@ -895,7 +964,6 @@
       <div class="section card"><div class="pad">內容區塊（品牌故事／出貨制度／服務承諾）</div></div>
     `;
     el.appendChild(wrap);
-    // keep it subtle, no need bottom bar on About (UPDATED)
     setBottomBar(null);
   }
 
@@ -921,7 +989,6 @@
       </div>
     `;
     el.appendChild(wrap);
-    // no bottom bar on Contact (UPDATED)
     setBottomBar(null);
   }
 
@@ -939,13 +1006,6 @@
   }
 
   // ---------- Header controls ----------
-  const btnMenu = document.getElementById("btnMenu");
-  const btnHome = document.getElementById("btnHome");
-  const btnSearch = document.getElementById("btnSearch");
-  const btnCart = document.getElementById("btnCart");
-  const drawer = document.getElementById("drawer");
-  const backdrop = document.getElementById("backdrop");
-
   function openDrawer(){
     drawer.classList.add("open");
     backdrop.classList.add("open");
