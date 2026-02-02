@@ -69,7 +69,7 @@
     }
 
     /* Layout */
-    .page{padding:14px 12px 90px;}
+    .page{padding:14px 12px 20px;} /* bottom bar removed, reduce padding */
     .h1{font-size:22px; font-weight:800; line-height:1.2; margin:6px 0 8px;}
     .sub{color:var(--muted); font-size:13px; line-height:1.4; margin:0 0 12px;}
     .card{
@@ -146,41 +146,6 @@
     summary::-webkit-details-marker{display:none;}
     .accBody{margin-top:8px; color:var(--muted); font-size:13px; line-height:1.4;}
 
-    /* Bottom bar — subtle version */
-    .bottomBar{
-      position:fixed; left:0; right:0; bottom:0; z-index:30;
-      display:flex; justify-content:center;
-      pointer-events:none;
-    }
-    .barInner{
-      max-width:var(--max);
-      width:100%;
-      padding:8px 10px 10px;
-      pointer-events:auto;
-    }
-    .barCard{
-      background:rgba(255,255,255,.85);
-      border:1px solid var(--line);
-      border-radius:14px;
-      box-shadow: var(--shadow2);
-      padding:8px 10px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      backdrop-filter: blur(6px);
-      gap:10px;
-    }
-    .barLeft{display:flex; flex-direction:column; gap:2px;}
-    .barTitle{font-weight:700; font-size:12px;}
-    .barMeta{font-size:11px; color:var(--muted);}
-
-    .pill{
-      height:40px; padding:0 14px; border-radius:999px;
-      border:1px solid var(--line);
-      background:#fff; cursor:pointer;
-    }
-    .pillPrimary{background:var(--cta); color:var(--ctaInk); border-color:var(--cta);}
-
     /* Drawer + modal */
     .backdrop{
       position:fixed; inset:0; background:rgba(0,0,0,.35);
@@ -255,19 +220,6 @@
     </div>
 
     <main id="appRoot"></main>
-
-    <!-- Bottom bar (contextual) -->
-    <div class="bottomBar">
-      <div class="barInner">
-        <div class="barCard" id="bottomBar" style="display:none;">
-          <div class="barLeft">
-            <div class="barTitle" id="barTitle">下一步</div>
-            <div class="barMeta" id="barMeta"></div>
-          </div>
-          <button class="pill pillPrimary" id="barPrimary">繼續</button>
-        </div>
-      </div>
-    </div>
 
     <!-- Drawer -->
     <div class="backdrop" id="backdrop"></div>
@@ -346,7 +298,7 @@
     const el = document.createElement("div");
     el.textContent = msg;
     el.style.position="fixed";
-    el.style.left="50%"; el.style.bottom="86px"; el.style.transform="translateX(-50%)";
+    el.style.left="50%"; el.style.bottom="18px"; el.style.transform="translateX(-50%)";
     el.style.background="#111"; el.style.color="#fff";
     el.style.padding="10px 14px"; el.style.borderRadius="999px";
     el.style.fontSize="13px"; el.style.boxShadow="0 10px 30px rgba(0,0,0,.25)";
@@ -381,10 +333,6 @@
 
   // ---------- Render shell ----------
   const root = document.getElementById("appRoot");
-  const bottomBar = document.getElementById("bottomBar");
-  const barTitle = document.getElementById("barTitle");
-  const barMeta = document.getElementById("barMeta");
-  const barPrimary = document.getElementById("barPrimary");
 
   // Header buttons
   const btnMenu = document.getElementById("btnMenu");
@@ -397,23 +345,10 @@
 
   btnLine.onclick = ()=> window.open(LINE_URL, "_blank");
 
-  function setBottomBar(cfg){
-    if(!cfg){
-      bottomBar.style.display="none";
-      return;
-    }
-    bottomBar.style.display="flex";
-    barTitle.textContent = cfg.title || "下一步";
-    barMeta.textContent = cfg.meta || "";
-    barPrimary.textContent = cfg.primaryLabel || "繼續";
-    barPrimary.onclick = cfg.onPrimary || (()=>{});
-  }
-
   function render(){
     const { path, params } = parseRoute();
     const pageFn = routes[path] || pageHome;
     root.innerHTML = "";
-    setBottomBar(null);
 
     const isOnsiteLP = path === "/onsite-service";
     const isOnsiteProduct = (path === "/product/:id") && state.services.some(s => s.id === params.id);
@@ -447,14 +382,14 @@
         <div class="imgPh">情境圖</div>
         <div class="pad">
           <div class="routeTitle">來幫我烤</div>
-          <div class="muted">入口分流（去 LP）</div>
+          <div class="muted">先用 LINE 確認檔期／場地限制</div>
           <div class="btnRow">
-            <button class="btn btnPrimary btnWide" id="goOnsite">了解代烤服務</button>
+            <button class="btn btnPrimary btnWide" id="goOnsiteLine">用 LINE 快速確認</button>
           </div>
+          <div class="mini">提醒：若你想看方案內容，也可用左上角選單進「來幫我烤」。</div>
         </div>
       </div>
 
-      <!-- NEW: Shop entry card -->
       <div class="section card routeCard">
         <div class="imgPh">情境圖</div>
         <div class="pad">
@@ -487,16 +422,9 @@
     el.appendChild(wrap);
 
     wrap.querySelector("#goBuy").onclick = ()=>go("/buy-yourself");
-    wrap.querySelector("#goOnsite").onclick = ()=>go("/onsite-service");
+    wrap.querySelector("#goOnsiteLine").onclick = ()=> window.open(LINE_URL, "_blank"); // UPDATED: CTA -> LINE
     wrap.querySelector("#goShop").onclick = ()=>go("/shop");
     wrap.querySelector("#goFaq").onclick = ()=>go("/faq");
-
-    setBottomBar({
-      title:"首頁",
-      meta:"先選路徑",
-      primaryLabel:"直接進去選購",
-      onPrimary: ()=>go("/shop")
-    });
   }
 
   function pageBuyYourself(el){
@@ -511,7 +439,6 @@
         </div>
       </div>
 
-      <!-- NEW: Shop entry inside LP -->
       <div class="section card">
         <div class="pad">
           <div class="kicker">我知道我要什麼</div>
@@ -595,13 +522,6 @@
     });
 
     wrap.querySelector("#goFaq2").onclick = ()=>go("/faq");
-
-    setBottomBar({
-      title:"我自己烤",
-      meta:"加入後去結帳",
-      primaryLabel:"前往購物車",
-      onPrimary: ()=>go("/cart")
-    });
   }
 
   function pageOnsite(el){
@@ -616,7 +536,6 @@
         </div>
       </div>
 
-      <!-- NEW: Shop entry inside LP -->
       <div class="section card">
         <div class="pad">
           <div class="kicker">我知道我要什麼</div>
@@ -707,13 +626,6 @@
         go(`/product/${id}`);
       };
     });
-
-    setBottomBar({
-      title:"來幫我烤",
-      meta:"加入後去結帳",
-      primaryLabel:"前往購物車",
-      onPrimary: ()=>go("/cart")
-    });
   }
 
   function pageShop(el){
@@ -781,7 +693,7 @@
             <button class="btn btnPrimary" data-add="${s.id}">加入購物車</button>
             <button class="btn" data-detail="${s.id}">看內容</button>
           </div>
-          <div class="mini">備註：若要先確認檔期／場地，可用右上角 LINE（僅支援，不導購）。</div>
+          <div class="mini">備註：若要先確認檔期／場地，可用右上角 LINE（僅支援）。</div>
         </div>
       </div>
     `).join("");
@@ -799,13 +711,6 @@
         const id = btn.getAttribute("data-detail");
         go(`/product/${id}`);
       };
-    });
-
-    setBottomBar({
-      title:"全商品",
-      meta:"選好就結帳",
-      primaryLabel:"前往購物車",
-      onPrimary: ()=>go("/cart")
     });
   }
 
@@ -839,7 +744,6 @@
     `;
     el.appendChild(wrap);
     wrap.querySelector("#goContact").onclick = ()=>go("/contact");
-    setBottomBar(null);
   }
 
   function pageCart(el){
@@ -896,13 +800,6 @@
     list.querySelectorAll("[data-plus]").forEach(b=> b.onclick=()=>updateQty(b.getAttribute("data-plus"), +1));
 
     wrap.querySelector("#goCheckout").onclick = ()=>go("/checkout");
-
-    setBottomBar({
-      title:"購物車",
-      meta:`合計 ${money(cartTotal())}`,
-      primaryLabel:"去結帳",
-      onPrimary: ()=>go("/checkout")
-    });
   }
 
   function pageCheckout(el){
@@ -943,8 +840,6 @@
       go("/home");
       render();
     };
-
-    setBottomBar(null);
   }
 
   function pageProduct(el, params){
@@ -1003,13 +898,6 @@
 
     const go2 = wrap.querySelector("#goLineHelp2");
     if(go2) go2.onclick = ()=> window.open(LINE_URL, "_blank");
-
-    setBottomBar({
-      title:"商品頁",
-      meta:"加入後去結帳",
-      primaryLabel:"前往購物車",
-      onPrimary: ()=>go("/cart")
-    });
   }
 
   function pageAbout(el){
@@ -1021,7 +909,6 @@
       <div class="section card"><div class="pad">內容區塊（品牌故事／出貨制度／服務承諾）</div></div>
     `;
     el.appendChild(wrap);
-    setBottomBar(null);
   }
 
   function pageContact(el){
@@ -1046,7 +933,6 @@
       </div>
     `;
     el.appendChild(wrap);
-    setBottomBar(null);
   }
 
   // ---------- Search ----------
@@ -1137,5 +1023,11 @@
   if(!location.hash) location.hash = "#/home";
   render();
 </script>
+
+<!--
+關聯主題回顧：
+1) 你把「方案比較」拿掉，改成新增「瀏覽全商品」入口，讓知道自己要什麼的人直接選購。
+2) 你希望代烤（來幫我烤）用 LINE 做前置確認（檔期/場地），不要干擾站內購物與結帳主流程。
+-->
 </body>
 </html>
