@@ -1,0 +1,1054 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mobile-first Wireframe Prototype</title>
+  <meta name="description" content="Mobile-first wireframe prototype with Home routing + LPs + Comparison + FAQ + Cart/Checkout" />
+  <style>
+    :root{
+      --bg:#f4f4f4; --card:#fff; --ink:#111; --muted:#666; --line:#ddd;
+      --cta:#111; --ctaInk:#fff; --soft:#f0f0f0;
+      --radius:16px;
+      --tap:44px;
+      --max:420px;
+      --shadow: 0 6px 18px rgba(0,0,0,.08);
+      --shadow2: 0 2px 10px rgba(0,0,0,.06);
+    }
+    *{box-sizing:border-box}
+    body{margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--ink);}
+    a{color:inherit; text-decoration:none}
+    button{font:inherit}
+    .app{max-width:var(--max); margin:0 auto; min-height:100vh; background:var(--bg);}
+    /* Header */
+    .header{
+      position:sticky; top:0; z-index:20;
+      background:rgba(244,244,244,.92);
+      backdrop-filter: blur(8px);
+      border-bottom:1px solid var(--line);
+    }
+    .headerRow{
+      height:56px;
+      display:grid;
+      grid-template-columns: var(--tap) 1fr calc(var(--tap)*2);
+      align-items:center;
+      padding:0 10px;
+      gap:8px;
+    }
+    .iconBtn{
+      height:var(--tap); width:var(--tap);
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:12px;
+      display:flex; align-items:center; justify-content:center;
+      box-shadow: var(--shadow2);
+      cursor:pointer;
+    }
+    .rightIcons{display:flex; justify-content:flex-end; gap:8px;}
+    .logo{
+      text-align:center; font-weight:700; letter-spacing:.2px;
+      padding:8px 10px;
+      border-radius:12px;
+      cursor:pointer;
+    }
+    /* Layout */
+    .page{padding:14px 12px 90px;}
+    .h1{font-size:22px; font-weight:800; line-height:1.2; margin:6px 0 8px;}
+    .sub{color:var(--muted); font-size:13px; line-height:1.4; margin:0 0 12px;}
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .section{margin:12px 0;}
+    .row{display:flex; gap:10px;}
+    .col{flex:1;}
+    .imgPh{
+      height:140px;
+      background:linear-gradient(135deg,#e9e9e9,#f7f7f7);
+      border-bottom:1px solid var(--line);
+      border-top-left-radius:var(--radius);
+      border-top-right-radius:var(--radius);
+      display:flex; align-items:center; justify-content:center;
+      color:#888; font-weight:700;
+    }
+    .pad{padding:12px;}
+    .chips{display:flex; gap:8px; flex-wrap:wrap;}
+    .chip{
+      background:var(--soft);
+      border:1px solid var(--line);
+      color:#333;
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:12px;
+    }
+    .btn{
+      height:var(--tap);
+      padding:0 14px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:8px;
+      min-width:120px;
+    }
+    .btnPrimary{
+      background:var(--cta);
+      color:var(--ctaInk);
+      border-color:var(--cta);
+    }
+    .btnWide{width:100%;}
+    .btnRow{display:flex; gap:10px; align-items:center;}
+    .muted{color:var(--muted); font-size:12px;}
+    .kicker{font-size:12px; color:#444; font-weight:700; letter-spacing:.2px;}
+    /* Routing cards */
+    .routeCard .pad{display:flex; flex-direction:column; gap:10px;}
+    .routeTitle{font-size:16px; font-weight:800; margin:0;}
+    /* Set cards */
+    .setCard .pad{display:flex; flex-direction:column; gap:10px;}
+    .setTop{display:flex; justify-content:space-between; align-items:flex-start; gap:10px;}
+    .setName{font-size:15px; font-weight:800; margin:0;}
+    .price{font-weight:800;}
+    ul{margin:0; padding-left:18px;}
+    li{margin:6px 0; font-size:13px; color:#333;}
+    /* Accordion */
+    details{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      padding:10px 12px;
+      box-shadow: var(--shadow2);
+    }
+    details + details{margin-top:10px;}
+    summary{cursor:pointer; font-weight:800; list-style:none;}
+    summary::-webkit-details-marker{display:none;}
+    .accBody{margin-top:8px; color:var(--muted); font-size:13px; line-height:1.4;}
+    /* Bottom bar */
+    .bottomBar{
+      position:fixed; left:0; right:0; bottom:0; z-index:30;
+      display:flex; justify-content:center;
+      pointer-events:none;
+    }
+    .barInner{
+      max-width:var(--max);
+      width:100%;
+      padding:10px 12px 14px;
+      pointer-events:auto;
+    }
+    .barCard{
+      background:rgba(255,255,255,.92);
+      border:1px solid var(--line);
+      border-radius:18px;
+      box-shadow: var(--shadow);
+      padding:10px;
+      display:flex; gap:10px; align-items:center; justify-content:space-between;
+      backdrop-filter: blur(8px);
+    }
+    .barLeft{display:flex; flex-direction:column; gap:2px;}
+    .barTitle{font-weight:800; font-size:13px;}
+    .barMeta{font-size:12px; color:var(--muted);}
+    .pill{
+      height:40px; padding:0 14px; border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff; cursor:pointer;
+    }
+    .pillPrimary{background:var(--cta); color:var(--ctaInk); border-color:var(--cta);}
+    /* Drawer + modal */
+    .backdrop{
+      position:fixed; inset:0; background:rgba(0,0,0,.35);
+      display:none; z-index:40;
+    }
+    .drawer{
+      position:fixed; top:0; left:0; height:100vh; width:min(320px, 86vw);
+      background:#fff; border-right:1px solid var(--line); box-shadow:var(--shadow);
+      transform:translateX(-102%); transition:.2s ease; z-index:50;
+      padding:12px;
+    }
+    .drawer.open{transform:translateX(0);}
+    .backdrop.open{display:block;}
+    .navItem{
+      height:var(--tap); display:flex; align-items:center;
+      border:1px solid var(--line); border-radius:14px;
+      padding:0 12px; margin:10px 0; background:#fff; cursor:pointer;
+    }
+    .navItem small{color:var(--muted); margin-left:auto;}
+    .modal{
+      position:fixed; left:50%; top:10%;
+      transform:translateX(-50%);
+      width:min(420px, 92vw);
+      background:#fff; border:1px solid var(--line); border-radius:18px;
+      box-shadow:var(--shadow); z-index:60; padding:12px;
+      display:none;
+    }
+    .modal.open{display:block;}
+    .field{display:flex; gap:10px; margin:10px 0;}
+    input{
+      width:100%; height:44px; border-radius:14px; border:1px solid var(--line);
+      padding:0 12px; font-size:14px; outline:none;
+    }
+    .list{
+      margin-top:8px;
+      border-top:1px solid var(--line);
+      padding-top:8px;
+    }
+    .result{
+      padding:10px 10px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      margin:8px 0;
+      cursor:pointer;
+      background:#fff;
+    }
+    /* Tables / small */
+    .hr{height:1px; background:var(--line); margin:10px 0;}
+    .mini{font-size:12px; color:var(--muted);}
+    .tag{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:6px 10px; font-size:12px; border-radius:999px;
+      background:var(--soft); border:1px solid var(--line);
+    }
+    .twoCol{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+    .note{font-size:12px; color:#444; background:var(--soft); border:1px solid var(--line); border-radius:14px; padding:10px;}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="header">
+      <div class="headerRow">
+        <button class="iconBtn" id="btnMenu" aria-label="Menu">☰</button>
+        <div class="logo" id="btnHome" title="Home">LOGO</div>
+        <div class="rightIcons">
+          <button class="iconBtn" id="btnSearch" aria-label="Search">🔍</button>
+          <button class="iconBtn" id="btnCart" aria-label="Cart">🛒</button>
+        </div>
+      </div>
+    </div>
+
+    <main id="appRoot"></main>
+
+    <!-- Bottom bar (contextual) -->
+    <div class="bottomBar">
+      <div class="barInner">
+        <div class="barCard" id="bottomBar" style="display:none;">
+          <div class="barLeft">
+            <div class="barTitle" id="barTitle">CTA</div>
+            <div class="barMeta" id="barMeta">Meta</div>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <button class="pill" id="barSecondary">Secondary</button>
+            <button class="pill pillPrimary" id="barPrimary">Primary</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Drawer -->
+    <div class="backdrop" id="backdrop"></div>
+    <aside class="drawer" id="drawer">
+      <div class="kicker">MENU</div>
+      <div class="navItem" data-go="#/home">Home <small>Routing</small></div>
+      <div class="navItem" data-go="#/buy-yourself">Buy Yourself <small>LP</small></div>
+      <div class="navItem" data-go="#/onsite-service">Onsite Service <small>LP</small></div>
+      <div class="navItem" data-go="#/comparison">Comparison <small>LP</small></div>
+      <div class="navItem" data-go="#/faq">FAQ <small>Page</small></div>
+      <div class="navItem" data-go="#/about">About <small>Trust</small></div>
+      <div class="navItem" data-go="#/contact">Contact <small>Info</small></div>
+      <div class="navItem" id="drawerClose">Close <small>✕</small></div>
+    </aside>
+
+    <!-- Search modal -->
+    <div class="modal" id="searchModal" role="dialog" aria-modal="true" aria-label="Search">
+      <div class="kicker">SEARCH</div>
+      <div class="field">
+        <input id="searchInput" placeholder="Search sets / items..." />
+        <button class="btn" id="searchClose">Close</button>
+      </div>
+      <div class="mini">Tip: try “starter”, “party”, “onsite”.</div>
+      <div class="list" id="searchResults"></div>
+    </div>
+
+    <div class="backdrop" id="modalBackdrop"></div>
+  </div>
+
+<script>
+  // ---------- Simple state ----------
+  const state = {
+    cart: [], // {id, name, price, qty, type}
+    sets: [
+      { id:"set-starter", name:"Starter Set", best:"First-time / Easy", price: 1890, highlights:["Fixed bundle", "Low risk", "Fast prep"], type:"buy" },
+      { id:"set-party", name:"Party Set", best:"Friends / Birthday", price: 2690, highlights:["More variety", "Looks great", "Balanced"], type:"buy" },
+      { id:"set-king", name:"King Set", best:"Big group / Premium", price: 3490, highlights:["Most generous", "Premium add-ons", "Best impact"], type:"buy" },
+    ],
+    services: [
+      { id:"svc-800", name:"Onsite Plan 800", best:"Basic flow support", price: 16000, highlights:["Onsite grilling", "Basic flow", "Standard cleanup"], type:"service" },
+      { id:"svc-1000", name:"Onsite Plan 1000", best:"Most popular", price: 20000, highlights:["Better pacing", "More control", "Smoother host"], type:"service" },
+      { id:"svc-1200", name:"Onsite Plan 1200", best:"Premium hosting", price: 24000, highlights:["Full control", "Best experience", "Best finish"], type:"service" },
+    ],
+    searchIndex: []
+  };
+
+  function money(n){ return "NT$ " + n.toLocaleString("en-US"); }
+
+  function addToCart(item){
+    const found = state.cart.find(x => x.id === item.id);
+    if(found) found.qty += 1;
+    else state.cart.push({ id:item.id, name:item.name, price:item.price, qty:1, type:item.type });
+    toast(`Added: ${item.name}`);
+    render();
+  }
+
+  function updateQty(id, delta){
+    const it = state.cart.find(x => x.id === id);
+    if(!it) return;
+    it.qty += delta;
+    if(it.qty <= 0) state.cart = state.cart.filter(x=>x.id!==id);
+    render();
+  }
+
+  function cartTotal(){
+    return state.cart.reduce((s,x)=> s + x.price*x.qty, 0);
+  }
+
+  // ---------- Tiny toast ----------
+  let toastTimer = null;
+  function toast(msg){
+    clearTimeout(toastTimer);
+    const el = document.createElement("div");
+    el.textContent = msg;
+    el.style.position="fixed";
+    el.style.left="50%"; el.style.bottom="86px"; el.style.transform="translateX(-50%)";
+    el.style.background="#111"; el.style.color="#fff";
+    el.style.padding="10px 14px"; el.style.borderRadius="999px";
+    el.style.fontSize="13px"; el.style.boxShadow="0 10px 30px rgba(0,0,0,.25)";
+    el.style.zIndex="80";
+    document.body.appendChild(el);
+    toastTimer = setTimeout(()=> el.remove(), 1200);
+  }
+
+  // ---------- Router ----------
+  const routes = {
+    "/home": pageHome,
+    "/buy-yourself": pageBuyYourself,
+    "/onsite-service": pageOnsite,
+    "/comparison": pageComparison,
+    "/faq": pageFAQ,
+    "/cart": pageCart,
+    "/checkout": pageCheckout,
+    "/about": pageAbout,
+    "/contact": pageContact,
+    "/product/:id": pageProduct,
+  };
+
+  function parseRoute(){
+    const hash = location.hash.replace("#","") || "/home";
+    // dynamic route: /product/<id>
+    if(hash.startsWith("/product/")) return { path:"/product/:id", params:{id: hash.split("/")[2] || ""} };
+    return { path: hash, params:{} };
+  }
+
+  function go(path){
+    location.hash = path;
+  }
+
+  // ---------- Render shell ----------
+  const root = document.getElementById("appRoot");
+  const bottomBar = document.getElementById("bottomBar");
+  const barTitle = document.getElementById("barTitle");
+  const barMeta = document.getElementById("barMeta");
+  const barPrimary = document.getElementById("barPrimary");
+  const barSecondary = document.getElementById("barSecondary");
+
+  function setBottomBar(cfg){
+    if(!cfg){
+      bottomBar.style.display="none";
+      return;
+    }
+    bottomBar.style.display="flex";
+    barTitle.textContent = cfg.title || "CTA";
+    barMeta.textContent = cfg.meta || "";
+    barPrimary.textContent = cfg.primaryLabel || "Primary";
+    barSecondary.textContent = cfg.secondaryLabel || "Secondary";
+    barPrimary.onclick = cfg.onPrimary || (()=>{});
+    barSecondary.onclick = cfg.onSecondary || (()=>{});
+  }
+
+  function render(){
+    const { path, params } = parseRoute();
+    const pageFn = routes[path] || pageHome;
+    root.innerHTML = "";
+    setBottomBar(null);
+    pageFn(root, params);
+    syncCartBadge();
+  }
+
+  // ---------- Pages ----------
+  function pageHome(el){
+    const wrap = document.createElement("div");
+    wrap.className="page";
+
+    wrap.innerHTML = `
+      <div class="h1">H1 Headline</div>
+      <div class="sub">Subheadline / 3 key points (mobile-first).</div>
+
+      <div class="section card routeCard">
+        <div class="imgPh">IMAGE</div>
+        <div class="pad">
+          <div class="routeTitle">Buy Yourself</div>
+          <div class="muted">Routing Card</div>
+          <div class="btnRow">
+            <button class="btn btnPrimary btnWide" id="goBuy">CTA</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section card routeCard">
+        <div class="imgPh">IMAGE</div>
+        <div class="pad">
+          <div class="routeTitle">Onsite Service</div>
+          <div class="muted">Routing Card</div>
+          <div class="btnRow">
+            <button class="btn btnPrimary btnWide" id="goOnsite">CTA</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="chips">
+          <div class="chip">Trust Chip</div>
+          <div class="chip">Trust Chip</div>
+          <div class="chip">Trust Chip</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <details open>
+          <summary>FAQ Accordion (Mini)</summary>
+          <div class="accBody">A few top questions. Link to full FAQ page.</div>
+          <div class="hr"></div>
+          <button class="btn btnWide" id="goFaq">Go to FAQ</button>
+        </details>
+      </div>
+    `;
+
+    el.appendChild(wrap);
+
+    wrap.querySelector("#goBuy").onclick = ()=>go("/buy-yourself");
+    wrap.querySelector("#goOnsite").onclick = ()=>go("/onsite-service");
+    wrap.querySelector("#goFaq").onclick = ()=>go("/faq");
+
+    // Minimal, but we still provide a contextual bottom bar (not LINE)
+    setBottomBar({
+      title:"Home",
+      meta:"Routing",
+      primaryLabel:"Buy Yourself",
+      secondaryLabel:"Onsite Service",
+      onPrimary: ()=>go("/buy-yourself"),
+      onSecondary: ()=>go("/onsite-service")
+    });
+  }
+
+  function pageBuyYourself(el){
+    const wrap = document.createElement("div");
+    wrap.className="page";
+    wrap.innerHTML = `
+      <div class="card">
+        <div class="imgPh">HERO IMAGE</div>
+        <div class="pad">
+          <div class="h1" style="margin:0 0 6px;">Buy Yourself LP</div>
+          <div class="sub" style="margin:0;">Value prop (1 line).</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="kicker">RECOMMENDED SETS (2–3)</div>
+        <div id="setList"></div>
+      </div>
+
+      <div class="section card">
+        <div class="pad">
+          <div class="kicker">UNBOX STEPS</div>
+          <div class="twoCol" style="margin-top:10px;">
+            <div class="note"><b>Step 1</b><br/>IMAGE + Caption</div>
+            <div class="note"><b>Step 2</b><br/>IMAGE + Caption</div>
+            <div class="note"><b>Step 3</b><br/>IMAGE + Caption</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="kicker">FAQ ACCORDION</div>
+        <details>
+          <summary>Question</summary>
+          <div class="accBody">Answer (2–4 lines).</div>
+        </details>
+        <details>
+          <summary>Question</summary>
+          <div class="accBody">Answer (2–4 lines).</div>
+        </details>
+        <details>
+          <summary>Question</summary>
+          <div class="accBody">Answer (2–4 lines).</div>
+        </details>
+        <button class="btn btnWide" style="margin-top:10px;" id="goFaq2">Go to FAQ</button>
+      </div>
+    `;
+    el.appendChild(wrap);
+
+    const list = wrap.querySelector("#setList");
+    list.innerHTML = state.sets.map(s => `
+      <div class="section card setCard">
+        <div class="pad">
+          <div class="setTop">
+            <div>
+              <div class="setName">${s.name}</div>
+              <div class="muted">Best for: ${s.best}</div>
+            </div>
+            <div class="price">${money(s.price)}</div>
+          </div>
+          <ul>
+            ${s.highlights.map(h=>`<li>${h}</li>`).join("")}
+          </ul>
+          <div class="btnRow">
+            <button class="btn btnPrimary" data-add="${s.id}">Quick Add</button>
+            <button class="btn" data-detail="${s.id}">See Details</button>
+          </div>
+        </div>
+      </div>
+    `).join("");
+
+    list.querySelectorAll("[data-add]").forEach(btn=>{
+      btn.onclick = ()=>{
+        const id = btn.getAttribute("data-add");
+        const item = state.sets.find(x=>x.id===id);
+        addToCart(item);
+      };
+    });
+
+    list.querySelectorAll("[data-detail]").forEach(btn=>{
+      btn.onclick = ()=>{
+        const id = btn.getAttribute("data-detail");
+        go(`/product/${id}`);
+      };
+    });
+
+    wrap.querySelector("#goFaq2").onclick = ()=>go("/faq");
+
+    setBottomBar({
+      title:"Buy Yourself",
+      meta:"Quick Add → Cart",
+      primaryLabel:"Go to Cart",
+      secondaryLabel:"Comparison",
+      onPrimary: ()=>go("/cart"),
+      onSecondary: ()=>go("/comparison")
+    });
+  }
+
+  function pageOnsite(el){
+    const wrap = document.createElement("div");
+    wrap.className="page";
+    wrap.innerHTML = `
+      <div class="card">
+        <div class="imgPh">HERO IMAGE</div>
+        <div class="pad">
+          <div class="h1" style="margin:0 0 6px;">Onsite Service LP</div>
+          <div class="sub" style="margin:0;">Promise (1 line).</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="kicker">PLANS</div>
+        <div id="svcList"></div>
+      </div>
+
+      <div class="section card">
+        <div class="pad">
+          <div class="kicker">PROCESS (4 STEPS)</div>
+          <div class="twoCol" style="margin-top:10px;">
+            <div class="note"><b>Step 1</b><br/>Request</div>
+            <div class="note"><b>Step 2</b><br/>Confirm</div>
+            <div class="note"><b>Step 3</b><br/>Onsite</div>
+            <div class="note"><b>Step 4</b><br/>Finish</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="kicker">FAQ ACCORDION</div>
+        <details>
+          <summary>Question</summary>
+          <div class="accBody">Answer (2–4 lines).</div>
+        </details>
+        <details>
+          <summary>Question</summary>
+          <div class="accBody">Answer (2–4 lines).</div>
+        </details>
+      </div>
+    `;
+    el.appendChild(wrap);
+
+    const list = wrap.querySelector("#svcList");
+    list.innerHTML = state.services.map(s => `
+      <div class="section card setCard">
+        <div class="pad">
+          <div class="setTop">
+            <div>
+              <div class="setName">${s.name}</div>
+              <div class="muted">Best for: ${s.best}</div>
+            </div>
+            <div class="price">${money(s.price)}</div>
+          </div>
+          <ul>
+            ${s.highlights.map(h=>`<li>${h}</li>`).join("")}
+          </ul>
+          <div class="btnRow">
+            <button class="btn btnPrimary" data-add="${s.id}">Add to Cart</button>
+            <button class="btn" data-detail="${s.id}">See Details</button>
+          </div>
+          <div class="mini">Note: Service items can be checked out here (cart/checkout supported).</div>
+        </div>
+      </div>
+    `).join("");
+
+    list.querySelectorAll("[data-add]").forEach(btn=>{
+      btn.onclick = ()=>{
+        const id = btn.getAttribute("data-add");
+        const item = state.services.find(x=>x.id===id);
+        addToCart(item);
+      };
+    });
+
+    list.querySelectorAll("[data-detail]").forEach(btn=>{
+      btn.onclick = ()=>{
+        const id = btn.getAttribute("data-detail");
+        go(`/product/${id}`);
+      };
+    });
+
+    setBottomBar({
+      title:"Onsite Service",
+      meta:"Add plan → Cart",
+      primaryLabel:"Go to Cart",
+      secondaryLabel:"FAQ",
+      onPrimary: ()=>go("/cart"),
+      onSecondary: ()=>go("/faq")
+    });
+  }
+
+  function pageComparison(el){
+    const wrap = document.createElement("div");
+    wrap.className="page";
+    wrap.innerHTML = `
+      <div class="h1">Comparison</div>
+      <div class="sub">3 cards (stacked). Each has Quick Add.</div>
+      <div id="cmp"></div>
+    `;
+    el.appendChild(wrap);
+
+    const cmp = wrap.querySelector("#cmp");
+    cmp.innerHTML = state.sets.map(s=>`
+      <div class="section card setCard">
+        <div class="pad">
+          <div class="setTop">
+            <div>
+              <div class="setName">${s.name}</div>
+              <div class="muted">Best for: ${s.best}</div>
+            </div>
+            <div class="price">${money(s.price)}</div>
+          </div>
+          <div class="chips">
+            <span class="tag">Feature</span>
+            <span class="tag">Feature</span>
+            <span class="tag">Feature</span>
+          </div>
+          <div class="btnRow" style="margin-top:10px;">
+            <button class="btn btnPrimary" data-add="${s.id}">Quick Add</button>
+            <button class="btn" data-detail="${s.id}">See Details</button>
+          </div>
+        </div>
+      </div>
+    `).join("");
+
+    cmp.querySelectorAll("[data-add]").forEach(btn=>{
+      btn.onclick = ()=>{
+        const id = btn.getAttribute("data-add");
+        const item = state.sets.find(x=>x.id===id);
+        addToCart(item);
+      };
+    });
+    cmp.querySelectorAll("[data-detail]").forEach(btn=>{
+      btn.onclick = ()=>{
+        const id = btn.getAttribute("data-detail");
+        go(`/product/${id}`);
+      };
+    });
+
+    setBottomBar({
+      title:"Comparison",
+      meta:"Quick Add available",
+      primaryLabel:"Go to Cart",
+      secondaryLabel:"Buy Yourself LP",
+      onPrimary: ()=>go("/cart"),
+      onSecondary: ()=>go("/buy-yourself")
+    });
+  }
+
+  function pageFAQ(el){
+    const wrap = document.createElement("div");
+    wrap.className="page";
+    wrap.innerHTML = `
+      <div class="h1">FAQ</div>
+      <div class="sub">Accordion / Tabs (simplified as sections).</div>
+
+      <div class="section">
+        <div class="kicker">BUY YOURSELF</div>
+        <details open><summary>Question</summary><div class="accBody">Answer.</div></details>
+        <details><summary>Question</summary><div class="accBody">Answer.</div></details>
+        <details><summary>Question</summary><div class="accBody">Answer.</div></details>
+      </div>
+
+      <div class="section">
+        <div class="kicker">ONSITE SERVICE</div>
+        <details><summary>Question</summary><div class="accBody">Answer.</div></details>
+        <details><summary>Question</summary><div class="accBody">Answer.</div></details>
+      </div>
+
+      <div class="section note">
+        <b>Support</b><br/>
+        This prototype keeps checkout on-site. Contact info goes to Contact page.
+        <div style="margin-top:10px;">
+          <button class="btn btnWide" id="goContact">Go to Contact</button>
+        </div>
+      </div>
+    `;
+    el.appendChild(wrap);
+    wrap.querySelector("#goContact").onclick = ()=>go("/contact");
+
+    setBottomBar({
+      title:"FAQ",
+      meta:"Self-service first",
+      primaryLabel:"Buy Yourself",
+      secondaryLabel:"Onsite Service",
+      onPrimary: ()=>go("/buy-yourself"),
+      onSecondary: ()=>go("/onsite-service")
+    });
+  }
+
+  function pageCart(el){
+    const wrap = document.createElement("div");
+    wrap.className="page";
+    const items = state.cart;
+    wrap.innerHTML = `
+      <div class="h1">Cart</div>
+      <div class="sub">Review items / adjust qty / proceed to checkout.</div>
+
+      <div class="section card">
+        <div class="pad" id="cartList"></div>
+      </div>
+
+      <div class="section card">
+        <div class="pad">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="kicker">TOTAL</div>
+            <div style="font-weight:900; font-size:16px;">${money(cartTotal())}</div>
+          </div>
+          <div class="hr"></div>
+          <button class="btn btnPrimary btnWide" id="goCheckout">Proceed to Checkout</button>
+          <div class="mini" style="margin-top:10px;">No LINE CTA here (do not distract checkout).</div>
+        </div>
+      </div>
+    `;
+    el.appendChild(wrap);
+
+    const list = wrap.querySelector("#cartList");
+    if(items.length===0){
+      list.innerHTML = `<div class="muted">Cart is empty.</div>
+        <div style="margin-top:10px;"><button class="btn btnWide" id="goShop">Go to Sets</button></div>`;
+      wrap.querySelector("#goShop").onclick = ()=>go("/buy-yourself");
+      wrap.querySelector("#goCheckout").onclick = ()=>go("/checkout");
+      wrap.querySelector("#goCheckout").disabled = true;
+      return;
+    }
+
+    list.innerHTML = items.map(it=>`
+      <div style="display:flex; justify-content:space-between; gap:10px; align-items:center; padding:10px 0; border-bottom:1px solid var(--line);">
+        <div style="flex:1;">
+          <div style="font-weight:800;">${it.name}</div>
+          <div class="mini">${money(it.price)} • Type: ${it.type}</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button class="iconBtn" data-minus="${it.id}" aria-label="Minus">−</button>
+          <div style="min-width:24px; text-align:center; font-weight:800;">${it.qty}</div>
+          <button class="iconBtn" data-plus="${it.id}" aria-label="Plus">＋</button>
+        </div>
+      </div>
+    `).join("");
+
+    list.querySelectorAll("[data-minus]").forEach(b=> b.onclick=()=>updateQty(b.getAttribute("data-minus"), -1));
+    list.querySelectorAll("[data-plus]").forEach(b=> b.onclick=()=>updateQty(b.getAttribute("data-plus"), +1));
+
+    wrap.querySelector("#goCheckout").onclick = ()=>go("/checkout");
+
+    setBottomBar({
+      title:"Cart",
+      meta:`Total ${money(cartTotal())}`,
+      primaryLabel:"Checkout",
+      secondaryLabel:"Add More",
+      onPrimary: ()=>go("/checkout"),
+      onSecondary: ()=>go("/buy-yourself")
+    });
+  }
+
+  function pageCheckout(el){
+    const wrap = document.createElement("div");
+    wrap.className="page";
+    wrap.innerHTML = `
+      <div class="h1">Checkout</div>
+      <div class="sub">Minimal fields (wireframe).</div>
+
+      <div class="section card">
+        <div class="pad">
+          <div class="kicker">CONTACT</div>
+          <div class="field"><input placeholder="Name" /></div>
+          <div class="field"><input placeholder="Phone" /></div>
+          <div class="field"><input placeholder="Address / Location" /></div>
+          <div class="kicker" style="margin-top:8px;">PAYMENT</div>
+          <div class="chips" style="margin-top:8px;">
+            <span class="chip">Option</span>
+            <span class="chip">Option</span>
+            <span class="chip">Option</span>
+          </div>
+          <div class="hr"></div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="kicker">TOTAL</div>
+            <div style="font-weight:900; font-size:16px;">${money(cartTotal())}</div>
+          </div>
+          <button class="btn btnPrimary btnWide" style="margin-top:10px;" id="placeOrder">Place Order</button>
+          <div class="mini" style="margin-top:10px;">Checkout should not show LINE CTA (keep focus).</div>
+        </div>
+      </div>
+    `;
+    el.appendChild(wrap);
+
+    wrap.querySelector("#placeOrder").onclick = ()=>{
+      if(state.cart.length===0){ toast("Cart is empty"); return; }
+      state.cart = [];
+      toast("Order placed (demo)");
+      go("/home");
+      render();
+    };
+
+    setBottomBar({
+      title:"Checkout",
+      meta:"Focus on completion",
+      primaryLabel:"Place Order",
+      secondaryLabel:"Back to Cart",
+      onPrimary: ()=>wrap.querySelector("#placeOrder").click(),
+      onSecondary: ()=>go("/cart")
+    });
+  }
+
+  function pageProduct(el, params){
+    const id = params.id;
+    const item = state.sets.find(x=>x.id===id) || state.services.find(x=>x.id===id);
+    const wrap = document.createElement("div");
+    wrap.className="page";
+
+    if(!item){
+      wrap.innerHTML = `<div class="h1">Product</div><div class="sub">Not found.</div>`;
+      el.appendChild(wrap);
+      return;
+    }
+
+    wrap.innerHTML = `
+      <div class="card">
+        <div class="imgPh">PRODUCT IMAGE</div>
+        <div class="pad">
+          <div class="h1" style="margin:0 0 6px;">${item.name}</div>
+          <div class="sub" style="margin:0;">Product Page (SEO + conversion).</div>
+          <div class="hr"></div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="kicker">PRICE</div>
+            <div style="font-weight:900;">${money(item.price)}</div>
+          </div>
+          <div class="hr"></div>
+          <div class="kicker">HIGHLIGHTS</div>
+          <ul>
+            ${(item.highlights||["Feature","Feature","Feature"]).map(h=>`<li>${h}</li>`).join("")}
+          </ul>
+          <button class="btn btnPrimary btnWide" id="add">Add to Cart</button>
+          <button class="btn btnWide" style="margin-top:10px;" id="goCompare">Go to Comparison</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="kicker">FAQ SNIPPET</div>
+        <details><summary>Question</summary><div class="accBody">Answer.</div></details>
+        <details><summary>Question</summary><div class="accBody">Answer.</div></details>
+      </div>
+    `;
+    el.appendChild(wrap);
+
+    wrap.querySelector("#add").onclick = ()=>addToCart(item);
+    wrap.querySelector("#goCompare").onclick = ()=>go("/comparison");
+
+    setBottomBar({
+      title:"Product",
+      meta:"Add to cart",
+      primaryLabel:"Go to Cart",
+      secondaryLabel:"Add",
+      onPrimary: ()=>go("/cart"),
+      onSecondary: ()=>wrap.querySelector("#add").click()
+    });
+  }
+
+  function pageAbout(el){
+    const wrap = document.createElement("div");
+    wrap.className="page";
+    wrap.innerHTML = `
+      <div class="h1">About</div>
+      <div class="sub">Trust page (short).</div>
+      <div class="section card"><div class="pad">Content block</div></div>
+    `;
+    el.appendChild(wrap);
+    setBottomBar({
+      title:"About",
+      meta:"Trust",
+      primaryLabel:"Buy Yourself",
+      secondaryLabel:"Onsite Service",
+      onPrimary: ()=>go("/buy-yourself"),
+      onSecondary: ()=>go("/onsite-service")
+    });
+  }
+
+  function pageContact(el){
+    const wrap = document.createElement("div");
+    wrap.className="page";
+    wrap.innerHTML = `
+      <div class="h1">Contact</div>
+      <div class="sub">Contact info (no forced chat).</div>
+      <div class="section card">
+        <div class="pad">
+          <div class="kicker">INFO</div>
+          <div class="note">Phone / Email / Address</div>
+          <div class="hr"></div>
+          <div class="kicker">LINKS</div>
+          <div class="chips">
+            <span class="chip">LINE</span>
+            <span class="chip">Instagram</span>
+            <span class="chip">Facebook</span>
+          </div>
+          <div class="mini" style="margin-top:10px;">LINE is support channel, not checkout channel.</div>
+        </div>
+      </div>
+    `;
+    el.appendChild(wrap);
+    setBottomBar({
+      title:"Contact",
+      meta:"Support",
+      primaryLabel:"FAQ",
+      secondaryLabel:"Home",
+      onPrimary: ()=>go("/faq"),
+      onSecondary: ()=>go("/home")
+    });
+  }
+
+  // ---------- Search ----------
+  function buildSearchIndex(){
+    state.searchIndex = [
+      ...state.sets.map(x=>({label:x.name, go:`/product/${x.id}`, keywords:["buy", "set", "starter", "party", "king", x.name.toLowerCase()]})),
+      ...state.services.map(x=>({label:x.name, go:`/product/${x.id}`, keywords:["onsite","service","plan","quote", x.name.toLowerCase()]})),
+      { label:"Buy Yourself LP", go:"/buy-yourself", keywords:["buy", "yourself", "lp"] },
+      { label:"Onsite Service LP", go:"/onsite-service", keywords:["onsite", "service", "lp"] },
+      { label:"Comparison", go:"/comparison", keywords:["compare", "comparison"] },
+      { label:"FAQ", go:"/faq", keywords:["faq", "question"] },
+      { label:"Cart", go:"/cart", keywords:["cart", "checkout"] },
+    ];
+  }
+
+  // ---------- Header controls ----------
+  const btnMenu = document.getElementById("btnMenu");
+  const btnHome = document.getElementById("btnHome");
+  const btnSearch = document.getElementById("btnSearch");
+  const btnCart = document.getElementById("btnCart");
+  const drawer = document.getElementById("drawer");
+  const backdrop = document.getElementById("backdrop");
+
+  function openDrawer(){
+    drawer.classList.add("open");
+    backdrop.classList.add("open");
+  }
+  function closeDrawer(){
+    drawer.classList.remove("open");
+    backdrop.classList.remove("open");
+  }
+  btnMenu.onclick = openDrawer;
+  backdrop.onclick = closeDrawer;
+  btnHome.onclick = ()=>go("/home");
+  btnCart.onclick = ()=>go("/cart");
+
+  drawer.addEventListener("click", (e)=>{
+    const item = e.target.closest(".navItem");
+    if(!item) return;
+    const goTo = item.getAttribute("data-go");
+    if(goTo) go(goTo.replace("#",""));
+    if(item.id==="drawerClose") {}
+    closeDrawer();
+  });
+
+  // Search modal
+  const searchModal = document.getElementById("searchModal");
+  const modalBackdrop = document.getElementById("modalBackdrop");
+  const searchInput = document.getElementById("searchInput");
+  const searchResults = document.getElementById("searchResults");
+  const searchClose = document.getElementById("searchClose");
+
+  function openSearch(){
+    searchModal.classList.add("open");
+    modalBackdrop.classList.add("open");
+    searchInput.value = "";
+    renderSearch("");
+    setTimeout(()=>searchInput.focus(), 50);
+  }
+  function closeSearch(){
+    searchModal.classList.remove("open");
+    modalBackdrop.classList.remove("open");
+  }
+  btnSearch.onclick = openSearch;
+  searchClose.onclick = closeSearch;
+  modalBackdrop.onclick = closeSearch;
+
+  searchInput.addEventListener("input", ()=> renderSearch(searchInput.value));
+  function renderSearch(q){
+    const query = (q||"").trim().toLowerCase();
+    const results = state.searchIndex
+      .filter(r => query==="" ? false : r.keywords.some(k => k.includes(query)))
+      .slice(0, 8);
+
+    searchResults.innerHTML = results.length
+      ? results.map(r=>`<div class="result" data-go="${r.go}">${r.label}</div>`).join("")
+      : (query==="" ? `<div class="mini">Type to search.</div>` : `<div class="mini">No results.</div>`);
+
+    searchResults.querySelectorAll(".result").forEach(r=>{
+      r.onclick = ()=>{
+        closeSearch();
+        go(r.getAttribute("data-go"));
+      };
+    });
+  }
+
+  // Cart badge (simple count in title tooltip)
+  function syncCartBadge(){
+    const count = state.cart.reduce((s,x)=>s+x.qty,0);
+    btnCart.title = `Cart (${count})`;
+  }
+
+  // ---------- Init ----------
+  buildSearchIndex();
+  window.addEventListener("hashchange", render);
+  if(!location.hash) location.hash = "#/home";
+  render();
+</script>
+</body>
+</html>
