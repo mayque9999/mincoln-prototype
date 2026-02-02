@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>名根烤肉｜Mobile-first 流程示意</title>
-  <meta name="description" content="Mobile-first 流程示意：首頁分流 + 兩條LP + 全商品入口 + FAQ + 購物車/結帳（全站不導外部聊天，結帳留在站內）" />
+  <meta name="description" content="Mobile-first 流程示意：首頁分流 + 兩條LP + 全商品入口(含單點) + FAQ + 購物車/結帳（代烤不進購物車，改用LINE先確認）" />
   <style>
     :root{
       --bg:#f4f4f4; --card:#fff; --ink:#111; --muted:#666; --line:#ddd;
@@ -69,7 +69,7 @@
     }
 
     /* Layout */
-    .page{padding:14px 12px 20px;} /* bottom bar removed, reduce padding */
+    .page{padding:14px 12px 20px;}
     .h1{font-size:22px; font-weight:800; line-height:1.2; margin:6px 0 8px;}
     .sub{color:var(--muted); font-size:13px; line-height:1.4; margin:0 0 12px;}
     .card{
@@ -79,8 +79,6 @@
       box-shadow: var(--shadow);
     }
     .section{margin:12px 0;}
-    .row{display:flex; gap:10px;}
-    .col{flex:1;}
     .imgPh{
       height:140px;
       background:linear-gradient(135deg,#e9e9e9,#f7f7f7);
@@ -196,11 +194,6 @@
     /* Tables / small */
     .hr{height:1px; background:var(--line); margin:10px 0;}
     .mini{font-size:12px; color:var(--muted);}
-    .tag{
-      display:inline-flex; align-items:center; justify-content:center;
-      padding:6px 10px; font-size:12px; border-radius:999px;
-      background:var(--soft); border:1px solid var(--line);
-    }
     .twoCol{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
     .note{font-size:12px; color:#444; background:var(--soft); border:1px solid var(--line); border-radius:14px; padding:10px;}
   </style>
@@ -228,7 +221,7 @@
       <div class="navItem" data-go="#/home">首頁 <small>分流</small></div>
       <div class="navItem" data-go="#/buy-yourself">我自己烤 <small>LP</small></div>
       <div class="navItem" data-go="#/onsite-service">來幫我烤 <small>LP</small></div>
-      <div class="navItem" data-go="#/shop">瀏覽全商品 <small>直接選購</small></div>
+      <div class="navItem" data-go="#/shop">瀏覽全商品 <small>含單點</small></div>
       <div class="navItem" data-go="#/faq">常見問題 <small>Page</small></div>
       <div class="navItem" data-go="#/about">關於我們 <small>信任</small></div>
       <div class="navItem" data-go="#/contact">聯絡方式 <small>資訊</small></div>
@@ -239,10 +232,10 @@
     <div class="modal" id="searchModal" role="dialog" aria-modal="true" aria-label="搜尋">
       <div class="kicker">搜尋</div>
       <div class="field">
-        <input id="searchInput" placeholder="搜尋方案 / 單品 / 服務..." />
+        <input id="searchInput" placeholder="搜尋方案 / 單點 / 服務..." />
         <button class="btn" id="searchClose">關閉</button>
       </div>
-      <div class="mini">提示：試試「入門」「派對」「代烤」「全商品」。</div>
+      <div class="mini">提示：試試「入門」「派對」「香腸」「玉米」「代烤」「全商品」。</div>
       <div class="list" id="searchResults"></div>
     </div>
 
@@ -263,6 +256,11 @@
       { id:"svc-1000", name:"代烤方案 1000", best:"主力推薦", price: 20000, highlights:["節奏更順", "控場更穩", "主揪更輕鬆"], type:"service" },
       { id:"svc-1200", name:"代烤方案 1200", best:"全包高階", price: 24000, highlights:["全程帶流程", "體驗最好", "收尾最完整"], type:"service" },
     ],
+    addons: [
+      { id:"add-sausage", name:"飛魚卵香腸（8條）", best:"加購熱門", price: 220, highlights:["下酒必備", "烤起來很穩", "搭配方案更完整"], type:"addon" },
+      { id:"add-corn", name:"甜玉米（切段）", best:"大人小孩都愛", price: 120, highlights:["不用處理", "補口感", "收尾很剛好"], type:"addon" },
+      { id:"add-shrimp", name:"熟白蝦（加購包）", best:"想看起來更澎湃", price: 280, highlights:["上桌有感", "更好掌握", "不怕退冰變色"], type:"addon" },
+    ],
     searchIndex: []
   };
 
@@ -272,6 +270,12 @@
   function money(n){ return "NT$ " + n.toLocaleString("en-US"); }
 
   function addToCart(item){
+    // 代烤不進購物車（只看內容 + LINE 確認）
+    if(item.type === "service"){
+      toast("代烤請先用 LINE 確認");
+      window.open(LINE_URL, "_blank");
+      return;
+    }
     const found = state.cart.find(x => x.id === item.id);
     if(found) found.qty += 1;
     else state.cart.push({ id:item.id, name:item.name, price:item.price, qty:1, type:item.type });
@@ -386,7 +390,7 @@
           <div class="btnRow">
             <button class="btn btnPrimary btnWide" id="goOnsiteLine">用 LINE 快速確認</button>
           </div>
-          <div class="mini">提醒：若你想看方案內容，也可用左上角選單進「來幫我烤」。</div>
+          <div class="mini">想先看方案內容：左上角選單 → 來幫我烤</div>
         </div>
       </div>
 
@@ -394,7 +398,7 @@
         <div class="imgPh">情境圖</div>
         <div class="pad">
           <div class="routeTitle">瀏覽全商品</div>
-          <div class="muted">我知道我要什麼（直接選購）</div>
+          <div class="muted">方案＋單點都在這裡（直接選購）</div>
           <div class="btnRow">
             <button class="btn btnPrimary btnWide" id="goShop">直接進去選購</button>
           </div>
@@ -404,7 +408,7 @@
       <div class="section">
         <div class="chips">
           <div class="chip">固定組合不踩雷</div>
-          <div class="chip">流程清楚好安排</div>
+          <div class="chip">單點加購很直覺</div>
           <div class="chip">FAQ 先自助解惑</div>
         </div>
       </div>
@@ -422,7 +426,7 @@
     el.appendChild(wrap);
 
     wrap.querySelector("#goBuy").onclick = ()=>go("/buy-yourself");
-    wrap.querySelector("#goOnsiteLine").onclick = ()=> window.open(LINE_URL, "_blank"); // UPDATED: CTA -> LINE
+    wrap.querySelector("#goOnsiteLine").onclick = ()=> window.open(LINE_URL, "_blank");
     wrap.querySelector("#goShop").onclick = ()=>go("/shop");
     wrap.querySelector("#goFaq").onclick = ()=>go("/faq");
   }
@@ -442,14 +446,19 @@
       <div class="section card">
         <div class="pad">
           <div class="kicker">我知道我要什麼</div>
-          <div class="sub" style="margin:6px 0 10px;">想直接挑？全商品都在這裡。</div>
+          <div class="sub" style="margin:6px 0 10px;">想直接挑？全商品（含單點）都在這裡。</div>
           <button class="btn btnPrimary btnWide" id="goShopFromBuy">瀏覽全商品</button>
         </div>
       </div>
 
       <div class="section">
-        <div class="kicker">推薦方案（2–3 組）</div>
+        <div class="kicker">推薦方案</div>
         <div id="setList"></div>
+      </div>
+
+      <div class="section">
+        <div class="kicker">單點加購（可選）</div>
+        <div id="addonList"></div>
       </div>
 
       <div class="section card">
@@ -495,12 +504,30 @@
             </div>
             <div class="price">${money(s.price)}</div>
           </div>
-          <ul>
-            ${s.highlights.map(h=>`<li>${h}</li>`).join("")}
-          </ul>
+          <ul>${s.highlights.map(h=>`<li>${h}</li>`).join("")}</ul>
           <div class="btnRow">
             <button class="btn btnPrimary" data-add="${s.id}">加入購物車</button>
             <button class="btn" data-detail="${s.id}">看內容</button>
+          </div>
+        </div>
+      </div>
+    `).join("");
+
+    const addonList = wrap.querySelector("#addonList");
+    addonList.innerHTML = state.addons.map(a => `
+      <div class="section card setCard">
+        <div class="pad">
+          <div class="setTop">
+            <div>
+              <div class="setName">${a.name}</div>
+              <div class="muted">適合：${a.best}</div>
+            </div>
+            <div class="price">${money(a.price)}</div>
+          </div>
+          <ul>${a.highlights.map(h=>`<li>${h}</li>`).join("")}</ul>
+          <div class="btnRow">
+            <button class="btn btnPrimary" data-add="${a.id}">加入購物車</button>
+            <button class="btn" data-detail="${a.id}">看內容</button>
           </div>
         </div>
       </div>
@@ -510,11 +537,18 @@
       btn.onclick = ()=>{
         const id = btn.getAttribute("data-add");
         const item = state.sets.find(x=>x.id===id);
-        addToCart(item);
+        if(item) addToCart(item);
+      };
+    });
+    addonList.querySelectorAll("[data-add]").forEach(btn=>{
+      btn.onclick = ()=>{
+        const id = btn.getAttribute("data-add");
+        const item = state.addons.find(x=>x.id===id);
+        if(item) addToCart(item);
       };
     });
 
-    list.querySelectorAll("[data-detail]").forEach(btn=>{
+    wrap.querySelectorAll("[data-detail]").forEach(btn=>{
       btn.onclick = ()=>{
         const id = btn.getAttribute("data-detail");
         go(`/product/${id}`);
@@ -532,40 +566,32 @@
         <div class="imgPh">主視覺</div>
         <div class="pad">
           <div class="h1" style="margin:0 0 6px;">來幫我烤｜你聊天，我來顧流程</div>
-          <div class="sub" style="margin:0;">不需要顧火、分配、收尾（流程我們帶）</div>
+          <div class="sub" style="margin:0;">代烤不走購物車：看內容 → 用 LINE 先確認</div>
         </div>
       </div>
 
       <div class="section card">
         <div class="pad">
-          <div class="kicker">我知道我要什麼</div>
-          <div class="sub" style="margin:6px 0 10px;">若你已經選好食材／方案，也可以直接進全商品。</div>
-          <button class="btn btnPrimary btnWide" id="goShopFromOnsite">瀏覽全商品</button>
+          <div class="kicker">快速確認（建議先做）</div>
+          <div class="sub" style="margin:6px 0 10px;">
+            先確認檔期／場地限制，我們會回你可行方案與建議。
+          </div>
+          <button class="btn btnPrimary btnWide" id="goLineHelp">用 LINE 快速確認</button>
+          <div class="mini" style="margin-top:8px;">備註：這裡的「代烤方案」不加入購物車。</div>
         </div>
       </div>
 
       <div class="section">
-        <div class="kicker">代烤方案</div>
+        <div class="kicker">代烤方案（看內容）</div>
         <div id="svcList"></div>
-      </div>
-
-      <div class="section card">
-        <div class="pad">
-          <div class="kicker">快速確認（選用）</div>
-          <div class="sub" style="margin:6px 0 10px;">
-            想先確認檔期／場地限制？可以用 LINE 快速說明，我們會回你可行方案。
-          </div>
-          <button class="btn btnWide" id="goLineHelp">用 LINE 快速確認</button>
-          <div class="mini" style="margin-top:8px;">提醒：下單仍在網站完成，LINE 用來確認細節。</div>
-        </div>
       </div>
 
       <div class="section card">
         <div class="pad">
           <div class="kicker">服務流程（4 步驟）</div>
           <div class="twoCol" style="margin-top:10px;">
-            <div class="note"><b>Step 1</b><br/>提出需求</div>
-            <div class="note"><b>Step 2</b><br/>確認內容</div>
+            <div class="note"><b>Step 1</b><br/>LINE 提出需求</div>
+            <div class="note"><b>Step 2</b><br/>確認內容與檔期</div>
             <div class="note"><b>Step 3</b><br/>到場代烤</div>
             <div class="note"><b>Step 4</b><br/>收尾完成</div>
           </div>
@@ -576,7 +602,7 @@
         <div class="kicker">常見問題</div>
         <details>
           <summary>代烤需要準備什麼？</summary>
-          <div class="accBody">示意：場地與插座即可，其餘我們協助。</div>
+          <div class="accBody">示意：場地與插座／遮雨即可，其餘我們協助。</div>
         </details>
         <details>
           <summary>下雨怎麼辦？</summary>
@@ -586,7 +612,6 @@
     `;
     el.appendChild(wrap);
 
-    wrap.querySelector("#goShopFromOnsite").onclick = ()=>go("/shop");
     wrap.querySelector("#goLineHelp").onclick = ()=> window.open(LINE_URL, "_blank");
 
     const list = wrap.querySelector("#svcList");
@@ -600,31 +625,24 @@
             </div>
             <div class="price">${money(s.price)}</div>
           </div>
-          <ul>
-            ${s.highlights.map(h=>`<li>${h}</li>`).join("")}
-          </ul>
+          <ul>${s.highlights.map(h=>`<li>${h}</li>`).join("")}</ul>
           <div class="btnRow">
-            <button class="btn btnPrimary" data-add="${s.id}">加入購物車</button>
-            <button class="btn" data-detail="${s.id}">看內容</button>
+            <button class="btn btnPrimary" data-detail="${s.id}">看內容</button>
+            <button class="btn" data-line>用 LINE 確認</button>
           </div>
-          <div class="mini">備註：本示意站支援加入購物車與結帳（不導聊天）。</div>
+          <div class="mini">備註：代烤不走購物車，先確認再安排。</div>
         </div>
       </div>
     `).join("");
-
-    list.querySelectorAll("[data-add]").forEach(btn=>{
-      btn.onclick = ()=>{
-        const id = btn.getAttribute("data-add");
-        const item = state.services.find(x=>x.id===id);
-        addToCart(item);
-      };
-    });
 
     list.querySelectorAll("[data-detail]").forEach(btn=>{
       btn.onclick = ()=>{
         const id = btn.getAttribute("data-detail");
         go(`/product/${id}`);
       };
+    });
+    list.querySelectorAll("[data-line]").forEach(btn=>{
+      btn.onclick = ()=> window.open(LINE_URL, "_blank");
     });
   }
 
@@ -633,7 +651,7 @@
     wrap.className="page";
     wrap.innerHTML = `
       <div class="h1">瀏覽全商品</div>
-      <div class="sub">知道自己要什麼？直接選購就好。</div>
+      <div class="sub">方案＋單點都在這裡，選好就結帳。</div>
 
       <div class="section card">
         <div class="pad">
@@ -645,8 +663,16 @@
 
       <div class="section card" style="margin-top:14px;">
         <div class="pad">
+          <div class="kicker">單點品項（加購）</div>
+          <div class="mini" style="margin-top:6px;">缺什麼補什麼，照你的習慣加就好。</div>
+        </div>
+      </div>
+      <div id="shopAddons"></div>
+
+      <div class="section card" style="margin-top:14px;">
+        <div class="pad">
           <div class="kicker">來幫我烤｜代烤方案</div>
-          <div class="mini" style="margin-top:6px;">你聊天，我們把流程顧好（下單仍在站內完成）。</div>
+          <div class="mini" style="margin-top:6px;">代烤不進購物車：看內容 → 用 LINE 先確認。</div>
         </div>
       </div>
       <div id="shopSvcs"></div>
@@ -664,12 +690,30 @@
             </div>
             <div class="price">${money(s.price)}</div>
           </div>
-          <ul>
-            ${s.highlights.map(h=>`<li>${h}</li>`).join("")}
-          </ul>
+          <ul>${s.highlights.map(h=>`<li>${h}</li>`).join("")}</ul>
           <div class="btnRow">
             <button class="btn btnPrimary" data-add="${s.id}">加入購物車</button>
             <button class="btn" data-detail="${s.id}">看內容</button>
+          </div>
+        </div>
+      </div>
+    `).join("");
+
+    const shopAddons = wrap.querySelector("#shopAddons");
+    shopAddons.innerHTML = state.addons.map(a => `
+      <div class="section card setCard">
+        <div class="pad">
+          <div class="setTop">
+            <div>
+              <div class="setName">${a.name}</div>
+              <div class="muted">適合：${a.best}</div>
+            </div>
+            <div class="price">${money(a.price)}</div>
+          </div>
+          <ul>${a.highlights.map(h=>`<li>${h}</li>`).join("")}</ul>
+          <div class="btnRow">
+            <button class="btn btnPrimary" data-add="${a.id}">加入購物車</button>
+            <button class="btn" data-detail="${a.id}">看內容</button>
           </div>
         </div>
       </div>
@@ -686,14 +730,12 @@
             </div>
             <div class="price">${money(s.price)}</div>
           </div>
-          <ul>
-            ${s.highlights.map(h=>`<li>${h}</li>`).join("")}
-          </ul>
+          <ul>${s.highlights.map(h=>`<li>${h}</li>`).join("")}</ul>
           <div class="btnRow">
-            <button class="btn btnPrimary" data-add="${s.id}">加入購物車</button>
-            <button class="btn" data-detail="${s.id}">看內容</button>
+            <button class="btn btnPrimary" data-detail="${s.id}">看內容</button>
+            <button class="btn" data-line>用 LINE 確認</button>
           </div>
-          <div class="mini">備註：若要先確認檔期／場地，可用右上角 LINE（僅支援）。</div>
+          <div class="mini">備註：代烤不走購物車，避免干擾結帳。</div>
         </div>
       </div>
     `).join("");
@@ -701,7 +743,7 @@
     wrap.querySelectorAll("[data-add]").forEach(btn=>{
       btn.onclick = ()=>{
         const id = btn.getAttribute("data-add");
-        const item = state.sets.find(x=>x.id===id) || state.services.find(x=>x.id===id);
+        const item = state.sets.find(x=>x.id===id) || state.addons.find(x=>x.id===id);
         if(item) addToCart(item);
       };
     });
@@ -711,6 +753,10 @@
         const id = btn.getAttribute("data-detail");
         go(`/product/${id}`);
       };
+    });
+
+    wrap.querySelectorAll("[data-line]").forEach(btn=>{
+      btn.onclick = ()=> window.open(LINE_URL, "_blank");
     });
   }
 
@@ -722,7 +768,7 @@
       <div class="sub">以分類 + 手風琴為主（示意）。</div>
 
       <div class="section">
-        <div class="kicker">我自己烤</div>
+        <div class="kicker">我自己烤 / 單點加購</div>
         <details open><summary>出貨與到貨怎麼看？</summary><div class="accBody">示意：依公告出貨區間安排，避免最後一刻才備貨。</div></details>
         <details><summary>退冰／保存怎麼做？</summary><div class="accBody">示意：提供簡易指引，降低失敗率。</div></details>
         <details><summary>要怎麼烤才不容易失手？</summary><div class="accBody">示意：用「開箱順序」引導你一步步完成。</div></details>
@@ -730,13 +776,13 @@
 
       <div class="section">
         <div class="kicker">來幫我烤</div>
-        <details><summary>需要幾個人？</summary><div class="accBody">示意：依人數/場地提供對應方案。</div></details>
+        <details><summary>怎麼確認檔期？</summary><div class="accBody">示意：先用 LINE 提供日期、地點、預估人數與場地限制。</div></details>
         <details><summary>場地限制怎麼處理？</summary><div class="accBody">示意：提早確認插座/動線/遮雨即可。</div></details>
       </div>
 
       <div class="section note">
-        <b>支援原則</b><br/>
-        此示意站維持「站內結帳」主流程。聯絡資訊放在「聯絡方式」頁，避免干擾轉換。
+        <b>流程原則</b><br/>
+        食材（方案/單點）走站內購物車與結帳；代烤走 LINE 先確認。
         <div style="margin-top:10px;">
           <button class="btn btnWide" id="goContact">前往聯絡方式</button>
         </div>
@@ -766,7 +812,7 @@
           </div>
           <div class="hr"></div>
           <button class="btn btnPrimary btnWide" id="goCheckout">前往結帳</button>
-          <div class="mini" style="margin-top:10px;">提醒：此頁不放聊天導流（避免干擾結帳）。</div>
+          <div class="mini" style="margin-top:10px;">提醒：代烤不在購物車內；要代烤先用 LINE 確認。</div>
         </div>
       </div>
     `;
@@ -827,7 +873,7 @@
             <div style="font-weight:900; font-size:16px;">${money(cartTotal())}</div>
           </div>
           <button class="btn btnPrimary btnWide" style="margin-top:10px;" id="placeOrder">送出訂單</button>
-          <div class="mini" style="margin-top:10px;">提醒：結帳頁保持聚焦（不放聊天導流）。</div>
+          <div class="mini" style="margin-top:10px;">提醒：代烤請另用 LINE 先確認。</div>
         </div>
       </div>
     `;
@@ -844,7 +890,11 @@
 
   function pageProduct(el, params){
     const id = params.id;
-    const item = state.sets.find(x=>x.id===id) || state.services.find(x=>x.id===id);
+    const item =
+      state.sets.find(x=>x.id===id) ||
+      state.addons.find(x=>x.id===id) ||
+      state.services.find(x=>x.id===id);
+
     const wrap = document.createElement("div");
     wrap.className="page";
 
@@ -854,34 +904,38 @@
       return;
     }
 
+    const isService = item.type === "service";
+    const subLabel = isService ? "代烤方案內容（不進購物車）" : "商品頁（SEO + 轉換）示意。";
+
     wrap.innerHTML = `
       <div class="card">
         <div class="imgPh">商品圖</div>
         <div class="pad">
           <div class="h1" style="margin:0 0 6px;">${item.name}</div>
-          <div class="sub" style="margin:0;">商品頁（SEO + 轉換）示意。</div>
+          <div class="sub" style="margin:0;">${subLabel}</div>
+
           <div class="hr"></div>
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <div class="kicker">價格</div>
             <div style="font-weight:900;">${money(item.price)}</div>
           </div>
+
           <div class="hr"></div>
           <div class="kicker">重點</div>
-          <ul>
-            ${(item.highlights||["特色","特色","特色"]).map(h=>`<li>${h}</li>`).join("")}
-          </ul>
-          <button class="btn btnPrimary btnWide" id="add">加入購物車</button>
-          <button class="btn btnWide" style="margin-top:10px;" id="goShop">回到全商品</button>
+          <ul>${(item.highlights||["特色","特色","特色"]).map(h=>`<li>${h}</li>`).join("")}</ul>
 
-          ${item.type==="service" ? `
-            <div class="hr"></div>
-            <div class="note">
-              <b>想先確認檔期／場地？</b><br/>
-              可以用 LINE 快速說明，我們會回你適合的方案。<br/>
-              <button class="btn btnWide" style="margin-top:10px;" id="goLineHelp2">用 LINE 快速確認</button>
-              <div class="mini" style="margin-top:8px;">下單仍在網站完成，LINE 用來確認細節。</div>
-            </div>
-          ` : ``}
+          ${
+            isService
+              ? `
+                <button class="btn btnPrimary btnWide" id="goLineHelp2">用 LINE 快速確認</button>
+                <button class="btn btnWide" style="margin-top:10px;" id="goOnsite">回到來幫我烤</button>
+                <div class="mini" style="margin-top:10px;">備註：代烤先確認檔期／場地，避免結帳流程被打斷。</div>
+              `
+              : `
+                <button class="btn btnPrimary btnWide" id="add">加入購物車</button>
+                <button class="btn btnWide" style="margin-top:10px;" id="goShop">回到全商品</button>
+              `
+          }
         </div>
       </div>
 
@@ -893,11 +947,13 @@
     `;
     el.appendChild(wrap);
 
-    wrap.querySelector("#add").onclick = ()=>addToCart(item);
-    wrap.querySelector("#goShop").onclick = ()=>go("/shop");
-
-    const go2 = wrap.querySelector("#goLineHelp2");
-    if(go2) go2.onclick = ()=> window.open(LINE_URL, "_blank");
+    if(isService){
+      wrap.querySelector("#goLineHelp2").onclick = ()=> window.open(LINE_URL, "_blank");
+      wrap.querySelector("#goOnsite").onclick = ()=> go("/onsite-service");
+    }else{
+      wrap.querySelector("#add").onclick = ()=>addToCart(item);
+      wrap.querySelector("#goShop").onclick = ()=>go("/shop");
+    }
   }
 
   function pageAbout(el){
@@ -924,11 +980,11 @@
           <div class="hr"></div>
           <div class="kicker">社群</div>
           <div class="chips">
-            <span class="chip">LINE（支援用）</span>
+            <span class="chip">LINE（代烤先確認）</span>
             <span class="chip">Instagram</span>
             <span class="chip">Facebook</span>
           </div>
-          <div class="mini" style="margin-top:10px;">提醒：LINE 是支援渠道，不是結帳渠道。</div>
+          <div class="mini" style="margin-top:10px;">提醒：食材走站內結帳；代烤走 LINE 先確認。</div>
         </div>
       </div>
     `;
@@ -938,13 +994,14 @@
   // ---------- Search ----------
   function buildSearchIndex(){
     state.searchIndex = [
-      ...state.sets.map(x=>({label:x.name, go:`/product/${x.id}`, keywords:["buy", "set", "starter", "party", "king", "入門", "派對", "豪華", x.name.toLowerCase()]})),
-      ...state.services.map(x=>({label:x.name, go:`/product/${x.id}`, keywords:["onsite","service","plan","quote", "代烤", "方案", x.name.toLowerCase()]})),
-      { label:"我自己烤｜LP", go:"/buy-yourself", keywords:["buy", "yourself", "lp", "自己烤"] },
-      { label:"來幫我烤｜LP", go:"/onsite-service", keywords:["onsite", "service", "lp", "代烤"] },
-      { label:"瀏覽全商品", go:"/shop", keywords:["shop","all","catalog","全商品","直接選購","選購"] },
-      { label:"常見問題", go:"/faq", keywords:["faq", "question", "問題"] },
-      { label:"購物車", go:"/cart", keywords:["cart", "checkout", "購物車", "結帳"] },
+      ...state.sets.map(x=>({label:`方案｜${x.name}`, go:`/product/${x.id}`, keywords:["buy","set","方案","自己烤","入門","派對","豪華", x.name.toLowerCase()]})),
+      ...state.addons.map(x=>({label:`單點｜${x.name}`, go:`/product/${x.id}`, keywords:["addon","單點","加購","香腸","玉米","蝦", x.name.toLowerCase()]})),
+      ...state.services.map(x=>({label:`代烤｜${x.name}`, go:`/product/${x.id}`, keywords:["onsite","service","代烤","到府代烤","方案", x.name.toLowerCase()]})),
+      { label:"我自己烤｜LP", go:"/buy-yourself", keywords:["buy","yourself","lp","自己烤"] },
+      { label:"來幫我烤｜LP", go:"/onsite-service", keywords:["onsite","service","lp","代烤","到府代烤"] },
+      { label:"瀏覽全商品（含單點）", go:"/shop", keywords:["shop","all","catalog","全商品","單點","加購","選購"] },
+      { label:"常見問題", go:"/faq", keywords:["faq","question","問題"] },
+      { label:"購物車", go:"/cart", keywords:["cart","checkout","購物車","結帳"] },
     ];
   }
 
@@ -997,7 +1054,7 @@
     const query = (q||"").trim().toLowerCase();
     const results = state.searchIndex
       .filter(r => query==="" ? false : r.keywords.some(k => k.includes(query)))
-      .slice(0, 8);
+      .slice(0, 10);
 
     searchResults.innerHTML = results.length
       ? results.map(r=>`<div class="result" data-go="${r.go}">${r.label}</div>`).join("")
@@ -1023,11 +1080,5 @@
   if(!location.hash) location.hash = "#/home";
   render();
 </script>
-
-<!--
-關聯主題回顧：
-1) 你把「方案比較」拿掉，改成新增「瀏覽全商品」入口，讓知道自己要什麼的人直接選購。
-2) 你希望代烤（來幫我烤）用 LINE 做前置確認（檔期/場地），不要干擾站內購物與結帳主流程。
--->
 </body>
 </html>
