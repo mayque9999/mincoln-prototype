@@ -196,6 +196,32 @@
     .mini{font-size:12px; color:var(--muted);}
     .twoCol{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
     .note{font-size:12px; color:#444; background:var(--soft); border:1px solid var(--line); border-radius:14px; padding:10px;}
+
+    /* ---- Home hierarchy (hero + light) ---- */
+    .routeCard.hero .imgPh{height:170px;}
+    .routeCard.hero .routeTitle{font-size:18px;}
+    .routeCard.hero .muted{font-size:13px;}
+    .routeCard.hero .btn{height:48px; border-radius:16px;}
+    .routeCard.light{box-shadow: var(--shadow2);}
+    .routeCard.light .imgPh{height:110px;}
+
+    /* ---- Addon quick row ---- */
+    .addonGrid{display:flex; flex-direction:column; gap:10px;}
+    .addonItem{
+      background:#fff; border:1px solid var(--line);
+      border-radius:16px; box-shadow: var(--shadow2);
+      padding:12px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .addonName{font-weight:900;}
+    .addonMeta{font-size:12px; color:var(--muted); margin-top:2px;}
+    .addonRight{display:flex; align-items:center; gap:10px;}
+    .addonPrice{font-weight:900; white-space:nowrap;}
+    .addonAdd{
+      height:40px; padding:0 12px; border-radius:999px;
+      border:1px solid var(--line); background:#fff; cursor:pointer;
+    }
+    .addonAdd.primary{background:#111; color:#fff; border-color:#111;}
   </style>
 </head>
 <body>
@@ -371,30 +397,7 @@
       <div class="h1">烤肉這件事，交給我們就好</div>
       <div class="sub">食材整組配好，自己烤或請人來烤都行</div>
 
-      <div class="section card routeCard">
-        <div class="imgPh">情境圖</div>
-        <div class="pad">
-          <div class="routeTitle">我自己烤</div>
-          <div class="muted">入口分流（去 LP）</div>
-          <div class="btnRow">
-            <button class="btn btnPrimary btnWide" id="goBuy">看推薦方案</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="section card routeCard">
-        <div class="imgPh">情境圖</div>
-        <div class="pad">
-          <div class="routeTitle">來幫我烤</div>
-          <div class="muted">先用 LINE 確認檔期／場地限制</div>
-          <div class="btnRow">
-            <button class="btn btnPrimary btnWide" id="goOnsiteLine">用 LINE 快速確認</button>
-          </div>
-          <div class="mini">想先看方案內容：左上角選單 → 來幫我烤</div>
-        </div>
-      </div>
-
-      <div class="section card routeCard">
+      <div class="section card routeCard hero">
         <div class="imgPh">情境圖</div>
         <div class="pad">
           <div class="routeTitle">瀏覽全商品</div>
@@ -402,6 +405,29 @@
           <div class="btnRow">
             <button class="btn btnPrimary btnWide" id="goShop">直接進去選購</button>
           </div>
+        </div>
+      </div>
+
+      <div class="section card routeCard light">
+        <div class="imgPh">情境圖</div>
+        <div class="pad">
+          <div class="routeTitle">我自己烤</div>
+          <div class="muted">先看推薦方案（去 LP）</div>
+          <div class="btnRow">
+            <button class="btn btnPrimary btnWide" id="goBuy">看推薦方案</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section card routeCard light">
+        <div class="imgPh">情境圖</div>
+        <div class="pad">
+          <div class="routeTitle">來幫我烤</div>
+          <div class="muted">代烤先用 LINE 確認檔期／場地</div>
+          <div class="btnRow">
+            <button class="btn btnPrimary btnWide" id="goOnsiteLine">用 LINE 快速確認</button>
+          </div>
+          <div class="mini">想先看方案內容：左上角選單 → 來幫我烤</div>
         </div>
       </div>
 
@@ -456,9 +482,12 @@
         <div id="setList"></div>
       </div>
 
-      <div class="section">
-        <div class="kicker">單點加購（可選）</div>
-        <div id="addonList"></div>
+      <div class="section card">
+        <div class="pad">
+          <div class="kicker">單點加購（可選）</div>
+          <div class="mini" style="margin-top:6px;">缺什麼補什麼，直接加就好。</div>
+          <div id="addonQuick" style="margin-top:10px;"></div>
+        </div>
       </div>
 
       <div class="section card">
@@ -513,25 +542,27 @@
       </div>
     `).join("");
 
-    const addonList = wrap.querySelector("#addonList");
-    addonList.innerHTML = state.addons.map(a => `
-      <div class="section card setCard">
-        <div class="pad">
-          <div class="setTop">
+    // Addon quick rows
+    const addonQuick = wrap.querySelector("#addonQuick");
+    addonQuick.innerHTML = `
+      <div class="addonGrid">
+        ${state.addons.map(a=>`
+          <div class="addonItem">
             <div>
-              <div class="setName">${a.name}</div>
-              <div class="muted">適合：${a.best}</div>
+              <div class="addonName">${a.name}</div>
+              <div class="addonMeta">${a.best}</div>
             </div>
-            <div class="price">${money(a.price)}</div>
+            <div class="addonRight">
+              <div class="addonPrice">${money(a.price)}</div>
+              <button class="addonAdd primary" data-addon="${a.id}">＋ 加購</button>
+            </div>
           </div>
-          <ul>${a.highlights.map(h=>`<li>${h}</li>`).join("")}</ul>
-          <div class="btnRow">
-            <button class="btn btnPrimary" data-add="${a.id}">加入購物車</button>
-            <button class="btn" data-detail="${a.id}">看內容</button>
-          </div>
-        </div>
+        `).join("")}
       </div>
-    `).join("");
+      <div style="margin-top:10px;">
+        <button class="btn btnWide" id="goShopMore">看更多（回到全商品）</button>
+      </div>
+    `;
 
     list.querySelectorAll("[data-add]").forEach(btn=>{
       btn.onclick = ()=>{
@@ -540,21 +571,23 @@
         if(item) addToCart(item);
       };
     });
-    addonList.querySelectorAll("[data-add]").forEach(btn=>{
-      btn.onclick = ()=>{
-        const id = btn.getAttribute("data-add");
-        const item = state.addons.find(x=>x.id===id);
-        if(item) addToCart(item);
-      };
-    });
 
-    wrap.querySelectorAll("[data-detail]").forEach(btn=>{
+    list.querySelectorAll("[data-detail]").forEach(btn=>{
       btn.onclick = ()=>{
         const id = btn.getAttribute("data-detail");
         go(`/product/${id}`);
       };
     });
 
+    addonQuick.querySelectorAll("[data-addon]").forEach(btn=>{
+      btn.onclick = ()=>{
+        const id = btn.getAttribute("data-addon");
+        const item = state.addons.find(x=>x.id===id);
+        if(item) addToCart(item);
+      };
+    });
+
+    wrap.querySelector("#goShopMore").onclick = ()=>go("/shop");
     wrap.querySelector("#goFaq2").onclick = ()=>go("/faq");
   }
 
@@ -577,7 +610,7 @@
             先確認檔期／場地限制，我們會回你可行方案與建議。
           </div>
           <button class="btn btnPrimary btnWide" id="goLineHelp">用 LINE 快速確認</button>
-          <div class="mini" style="margin-top:8px;">備註：這裡的「代烤方案」不加入購物車。</div>
+          <div class="mini" style="margin-top:8px;">備註：代烤方案不加入購物車。</div>
         </div>
       </div>
 
@@ -627,10 +660,10 @@
           </div>
           <ul>${s.highlights.map(h=>`<li>${h}</li>`).join("")}</ul>
           <div class="btnRow">
-            <button class="btn btnPrimary" data-detail="${s.id}">看內容</button>
-            <button class="btn" data-line>用 LINE 確認</button>
+            <button class="btn btnPrimary" data-line="${s.id}">用 LINE 先確認</button>
+            <button class="btn" data-detail="${s.id}">看內容</button>
           </div>
-          <div class="mini">備註：代烤不走購物車，先確認再安排。</div>
+          <div class="mini">備註：代烤先確認檔期／場地，再安排內容。</div>
         </div>
       </div>
     `).join("");
@@ -641,6 +674,7 @@
         go(`/product/${id}`);
       };
     });
+
     list.querySelectorAll("[data-line]").forEach(btn=>{
       btn.onclick = ()=> window.open(LINE_URL, "_blank");
     });
@@ -699,25 +733,24 @@
       </div>
     `).join("");
 
+    // Addons as quick rows (not as big set cards)
     const shopAddons = wrap.querySelector("#shopAddons");
-    shopAddons.innerHTML = state.addons.map(a => `
-      <div class="section card setCard">
-        <div class="pad">
-          <div class="setTop">
+    shopAddons.innerHTML = `
+      <div class="addonGrid">
+        ${state.addons.map(a=>`
+          <div class="addonItem">
             <div>
-              <div class="setName">${a.name}</div>
-              <div class="muted">適合：${a.best}</div>
+              <div class="addonName">${a.name}</div>
+              <div class="addonMeta">${a.best}</div>
             </div>
-            <div class="price">${money(a.price)}</div>
+            <div class="addonRight">
+              <div class="addonPrice">${money(a.price)}</div>
+              <button class="addonAdd primary" data-addon="${a.id}">＋ 加購</button>
+            </div>
           </div>
-          <ul>${a.highlights.map(h=>`<li>${h}</li>`).join("")}</ul>
-          <div class="btnRow">
-            <button class="btn btnPrimary" data-add="${a.id}">加入購物車</button>
-            <button class="btn" data-detail="${a.id}">看內容</button>
-          </div>
-        </div>
+        `).join("")}
       </div>
-    `).join("");
+    `;
 
     const shopSvcs = wrap.querySelector("#shopSvcs");
     shopSvcs.innerHTML = state.services.map(s => `
@@ -732,22 +765,33 @@
           </div>
           <ul>${s.highlights.map(h=>`<li>${h}</li>`).join("")}</ul>
           <div class="btnRow">
-            <button class="btn btnPrimary" data-detail="${s.id}">看內容</button>
-            <button class="btn" data-line>用 LINE 確認</button>
+            <button class="btn btnPrimary" data-line="${s.id}">用 LINE 先確認</button>
+            <button class="btn" data-detail="${s.id}">看內容</button>
           </div>
           <div class="mini">備註：代烤不走購物車，避免干擾結帳。</div>
         </div>
       </div>
     `).join("");
 
+    // bind: sets add
     wrap.querySelectorAll("[data-add]").forEach(btn=>{
       btn.onclick = ()=>{
         const id = btn.getAttribute("data-add");
-        const item = state.sets.find(x=>x.id===id) || state.addons.find(x=>x.id===id);
+        const item = state.sets.find(x=>x.id===id);
         if(item) addToCart(item);
       };
     });
 
+    // bind: addons add
+    wrap.querySelectorAll("[data-addon]").forEach(btn=>{
+      btn.onclick = ()=>{
+        const id = btn.getAttribute("data-addon");
+        const item = state.addons.find(x=>x.id===id);
+        if(item) addToCart(item);
+      };
+    });
+
+    // bind: details (sets + services)
     wrap.querySelectorAll("[data-detail]").forEach(btn=>{
       btn.onclick = ()=>{
         const id = btn.getAttribute("data-detail");
@@ -755,6 +799,7 @@
       };
     });
 
+    // bind: services LINE
     wrap.querySelectorAll("[data-line]").forEach(btn=>{
       btn.onclick = ()=> window.open(LINE_URL, "_blank");
     });
