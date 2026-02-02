@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mobile-first Wireframe Prototype</title>
-  <meta name="description" content="Mobile-first wireframe prototype with Home routing + LPs + Comparison + FAQ + Cart/Checkout" />
+  <title>名根烤肉｜Mobile-first 流程示意</title>
+  <meta name="description" content="Mobile-first 流程示意：首頁分流 + 兩條LP + 方案比較 + FAQ + 購物車/結帳（全站不導外部聊天，結帳留在站內）" />
   <style>
     :root{
       --bg:#f4f4f4; --card:#fff; --ink:#111; --muted:#666; --line:#ddd;
@@ -217,11 +217,11 @@
   <div class="app">
     <div class="header">
       <div class="headerRow">
-        <button class="iconBtn" id="btnMenu" aria-label="Menu">☰</button>
-        <div class="logo" id="btnHome" title="Home">LOGO</div>
+        <button class="iconBtn" id="btnMenu" aria-label="選單">☰</button>
+        <div class="logo" id="btnHome" title="回首頁">名根烤肉</div>
         <div class="rightIcons">
-          <button class="iconBtn" id="btnSearch" aria-label="Search">🔍</button>
-          <button class="iconBtn" id="btnCart" aria-label="Cart">🛒</button>
+          <button class="iconBtn" id="btnSearch" aria-label="搜尋">🔍</button>
+          <button class="iconBtn" id="btnCart" aria-label="購物車">🛒</button>
         </div>
       </div>
     </div>
@@ -233,12 +233,12 @@
       <div class="barInner">
         <div class="barCard" id="bottomBar" style="display:none;">
           <div class="barLeft">
-            <div class="barTitle" id="barTitle">CTA</div>
-            <div class="barMeta" id="barMeta">Meta</div>
+            <div class="barTitle" id="barTitle">行動提示</div>
+            <div class="barMeta" id="barMeta">說明</div>
           </div>
           <div style="display:flex; gap:10px;">
-            <button class="pill" id="barSecondary">Secondary</button>
-            <button class="pill pillPrimary" id="barPrimary">Primary</button>
+            <button class="pill" id="barSecondary">次要</button>
+            <button class="pill pillPrimary" id="barPrimary">主要</button>
           </div>
         </div>
       </div>
@@ -247,25 +247,25 @@
     <!-- Drawer -->
     <div class="backdrop" id="backdrop"></div>
     <aside class="drawer" id="drawer">
-      <div class="kicker">MENU</div>
-      <div class="navItem" data-go="#/home">Home <small>Routing</small></div>
-      <div class="navItem" data-go="#/buy-yourself">Buy Yourself <small>LP</small></div>
-      <div class="navItem" data-go="#/onsite-service">Onsite Service <small>LP</small></div>
-      <div class="navItem" data-go="#/comparison">Comparison <small>LP</small></div>
-      <div class="navItem" data-go="#/faq">FAQ <small>Page</small></div>
-      <div class="navItem" data-go="#/about">About <small>Trust</small></div>
-      <div class="navItem" data-go="#/contact">Contact <small>Info</small></div>
-      <div class="navItem" id="drawerClose">Close <small>✕</small></div>
+      <div class="kicker">全站導覽</div>
+      <div class="navItem" data-go="#/home">首頁 <small>分流</small></div>
+      <div class="navItem" data-go="#/buy-yourself">我自己烤 <small>LP</small></div>
+      <div class="navItem" data-go="#/onsite-service">來幫我烤 <small>LP</small></div>
+      <div class="navItem" data-go="#/comparison">方案比較 <small>LP</small></div>
+      <div class="navItem" data-go="#/faq">常見問題 <small>Page</small></div>
+      <div class="navItem" data-go="#/about">關於我們 <small>信任</small></div>
+      <div class="navItem" data-go="#/contact">聯絡方式 <small>資訊</small></div>
+      <div class="navItem" id="drawerClose">關閉 <small>✕</small></div>
     </aside>
 
     <!-- Search modal -->
-    <div class="modal" id="searchModal" role="dialog" aria-modal="true" aria-label="Search">
-      <div class="kicker">SEARCH</div>
+    <div class="modal" id="searchModal" role="dialog" aria-modal="true" aria-label="搜尋">
+      <div class="kicker">搜尋</div>
       <div class="field">
-        <input id="searchInput" placeholder="Search sets / items..." />
-        <button class="btn" id="searchClose">Close</button>
+        <input id="searchInput" placeholder="搜尋方案 / 單品 / 服務..." />
+        <button class="btn" id="searchClose">關閉</button>
       </div>
-      <div class="mini">Tip: try “starter”, “party”, “onsite”.</div>
+      <div class="mini">提示：試試「入門」「派對」「代烤」「比較」。</div>
       <div class="list" id="searchResults"></div>
     </div>
 
@@ -277,14 +277,14 @@
   const state = {
     cart: [], // {id, name, price, qty, type}
     sets: [
-      { id:"set-starter", name:"Starter Set", best:"First-time / Easy", price: 1890, highlights:["Fixed bundle", "Low risk", "Fast prep"], type:"buy" },
-      { id:"set-party", name:"Party Set", best:"Friends / Birthday", price: 2690, highlights:["More variety", "Looks great", "Balanced"], type:"buy" },
-      { id:"set-king", name:"King Set", best:"Big group / Premium", price: 3490, highlights:["Most generous", "Premium add-ons", "Best impact"], type:"buy" },
+      { id:"set-starter", name:"入門款", best:"第一次 / 最穩", price: 1890, highlights:["固定組合", "不踩雷", "備料快"], type:"buy" },
+      { id:"set-party", name:"派對款", best:"朋友 / 生日", price: 2690, highlights:["更豐富", "看起來澎湃", "口味平衡"], type:"buy" },
+      { id:"set-king", name:"豪華款", best:"多人 / 高級感", price: 3490, highlights:["份量最有感", "可加購升級", "招待不失禮"], type:"buy" },
     ],
     services: [
-      { id:"svc-800", name:"Onsite Plan 800", best:"Basic flow support", price: 16000, highlights:["Onsite grilling", "Basic flow", "Standard cleanup"], type:"service" },
-      { id:"svc-1000", name:"Onsite Plan 1000", best:"Most popular", price: 20000, highlights:["Better pacing", "More control", "Smoother host"], type:"service" },
-      { id:"svc-1200", name:"Onsite Plan 1200", best:"Premium hosting", price: 24000, highlights:["Full control", "Best experience", "Best finish"], type:"service" },
+      { id:"svc-800", name:"代烤方案 800", best:"基本流程協助", price: 16000, highlights:["到府代烤", "基本控場", "標準收尾"], type:"service" },
+      { id:"svc-1000", name:"代烤方案 1000", best:"主力推薦", price: 20000, highlights:["節奏更順", "控場更穩", "主揪更輕鬆"], type:"service" },
+      { id:"svc-1200", name:"代烤方案 1200", best:"全包高階", price: 24000, highlights:["全程帶流程", "體驗最好", "收尾最完整"], type:"service" },
     ],
     searchIndex: []
   };
@@ -295,7 +295,7 @@
     const found = state.cart.find(x => x.id === item.id);
     if(found) found.qty += 1;
     else state.cart.push({ id:item.id, name:item.name, price:item.price, qty:1, type:item.type });
-    toast(`Added: ${item.name}`);
+    toast(`已加入：${item.name}`);
     render();
   }
 
@@ -366,10 +366,10 @@
       return;
     }
     bottomBar.style.display="flex";
-    barTitle.textContent = cfg.title || "CTA";
+    barTitle.textContent = cfg.title || "行動提示";
     barMeta.textContent = cfg.meta || "";
-    barPrimary.textContent = cfg.primaryLabel || "Primary";
-    barSecondary.textContent = cfg.secondaryLabel || "Secondary";
+    barPrimary.textContent = cfg.primaryLabel || "主要";
+    barSecondary.textContent = cfg.secondaryLabel || "次要";
     barPrimary.onclick = cfg.onPrimary || (()=>{});
     barSecondary.onclick = cfg.onSecondary || (()=>{});
   }
@@ -389,45 +389,45 @@
     wrap.className="page";
 
     wrap.innerHTML = `
-      <div class="h1">H1 Headline</div>
-      <div class="sub">Subheadline / 3 key points (mobile-first).</div>
+      <div class="h1">烤肉這件事，交給我們就好</div>
+      <div class="sub">食材整組配好，自己烤或請人來烤都行</div>
 
       <div class="section card routeCard">
-        <div class="imgPh">IMAGE</div>
+        <div class="imgPh">情境圖</div>
         <div class="pad">
-          <div class="routeTitle">Buy Yourself</div>
-          <div class="muted">Routing Card</div>
+          <div class="routeTitle">我自己烤</div>
+          <div class="muted">入口分流（去 LP）</div>
           <div class="btnRow">
-            <button class="btn btnPrimary btnWide" id="goBuy">CTA</button>
+            <button class="btn btnPrimary btnWide" id="goBuy">看推薦方案</button>
           </div>
         </div>
       </div>
 
       <div class="section card routeCard">
-        <div class="imgPh">IMAGE</div>
+        <div class="imgPh">情境圖</div>
         <div class="pad">
-          <div class="routeTitle">Onsite Service</div>
-          <div class="muted">Routing Card</div>
+          <div class="routeTitle">來幫我烤</div>
+          <div class="muted">入口分流（去 LP）</div>
           <div class="btnRow">
-            <button class="btn btnPrimary btnWide" id="goOnsite">CTA</button>
+            <button class="btn btnPrimary btnWide" id="goOnsite">了解代烤服務</button>
           </div>
         </div>
       </div>
 
       <div class="section">
         <div class="chips">
-          <div class="chip">Trust Chip</div>
-          <div class="chip">Trust Chip</div>
-          <div class="chip">Trust Chip</div>
+          <div class="chip">固定組合不踩雷</div>
+          <div class="chip">流程清楚好安排</div>
+          <div class="chip">FAQ 先自助解惑</div>
         </div>
       </div>
 
       <div class="section">
         <details open>
-          <summary>FAQ Accordion (Mini)</summary>
-          <div class="accBody">A few top questions. Link to full FAQ page.</div>
+          <summary>常見問題（精簡）</summary>
+          <div class="accBody">先放 3–5 個最常見的問題，導去完整 FAQ。</div>
           <div class="hr"></div>
-          <button class="btn btnWide" id="goFaq">Go to FAQ</button>
+          <button class="btn btnWide" id="goFaq">查看完整 FAQ</button>
         </details>
       </div>
     `;
@@ -440,10 +440,10 @@
 
     // Minimal, but we still provide a contextual bottom bar (not LINE)
     setBottomBar({
-      title:"Home",
-      meta:"Routing",
-      primaryLabel:"Buy Yourself",
-      secondaryLabel:"Onsite Service",
+      title:"首頁",
+      meta:"先選路徑",
+      primaryLabel:"我自己烤",
+      secondaryLabel:"來幫我烤",
       onPrimary: ()=>go("/buy-yourself"),
       onSecondary: ()=>go("/onsite-service")
     });
@@ -454,44 +454,44 @@
     wrap.className="page";
     wrap.innerHTML = `
       <div class="card">
-        <div class="imgPh">HERO IMAGE</div>
+        <div class="imgPh">主視覺</div>
         <div class="pad">
-          <div class="h1" style="margin:0 0 6px;">Buy Yourself LP</div>
-          <div class="sub" style="margin:0;">Value prop (1 line).</div>
+          <div class="h1" style="margin:0 0 6px;">我自己烤｜懶人也能成功</div>
+          <div class="sub" style="margin:0;">不需要研究怎麼配，照著做就好</div>
         </div>
       </div>
 
       <div class="section">
-        <div class="kicker">RECOMMENDED SETS (2–3)</div>
+        <div class="kicker">推薦方案（2–3 組）</div>
         <div id="setList"></div>
       </div>
 
       <div class="section card">
         <div class="pad">
-          <div class="kicker">UNBOX STEPS</div>
+          <div class="kicker">開箱順序</div>
           <div class="twoCol" style="margin-top:10px;">
-            <div class="note"><b>Step 1</b><br/>IMAGE + Caption</div>
-            <div class="note"><b>Step 2</b><br/>IMAGE + Caption</div>
-            <div class="note"><b>Step 3</b><br/>IMAGE + Caption</div>
+            <div class="note"><b>Step 1</b><br/>先烤不容易失手的（示意）</div>
+            <div class="note"><b>Step 2</b><br/>主菜上場（示意）</div>
+            <div class="note"><b>Step 3</b><br/>收尾剛剛好（示意）</div>
           </div>
         </div>
       </div>
 
       <div class="section">
-        <div class="kicker">FAQ ACCORDION</div>
+        <div class="kicker">常見問題</div>
         <details>
-          <summary>Question</summary>
-          <div class="accBody">Answer (2–4 lines).</div>
+          <summary>我需要自備什麼？</summary>
+          <div class="accBody">示意：我們會附上基本烤肉配件與簡易說明。</div>
         </details>
         <details>
-          <summary>Question</summary>
-          <div class="accBody">Answer (2–4 lines).</div>
+          <summary>多久會出貨？</summary>
+          <div class="accBody">示意：依公告出貨區間安排，確保備貨與品質。</div>
         </details>
         <details>
-          <summary>Question</summary>
-          <div class="accBody">Answer (2–4 lines).</div>
+          <summary>可以指定到貨日嗎？</summary>
+          <div class="accBody">示意：可選擇指定/不指定（規則以官網公告為準）。</div>
         </details>
-        <button class="btn btnWide" style="margin-top:10px;" id="goFaq2">Go to FAQ</button>
+        <button class="btn btnWide" style="margin-top:10px;" id="goFaq2">查看完整 FAQ</button>
       </div>
     `;
     el.appendChild(wrap);
@@ -503,7 +503,7 @@
           <div class="setTop">
             <div>
               <div class="setName">${s.name}</div>
-              <div class="muted">Best for: ${s.best}</div>
+              <div class="muted">適合：${s.best}</div>
             </div>
             <div class="price">${money(s.price)}</div>
           </div>
@@ -511,8 +511,8 @@
             ${s.highlights.map(h=>`<li>${h}</li>`).join("")}
           </ul>
           <div class="btnRow">
-            <button class="btn btnPrimary" data-add="${s.id}">Quick Add</button>
-            <button class="btn" data-detail="${s.id}">See Details</button>
+            <button class="btn btnPrimary" data-add="${s.id}">加入購物車</button>
+            <button class="btn" data-detail="${s.id}">看內容</button>
           </div>
         </div>
       </div>
@@ -536,10 +536,10 @@
     wrap.querySelector("#goFaq2").onclick = ()=>go("/faq");
 
     setBottomBar({
-      title:"Buy Yourself",
-      meta:"Quick Add → Cart",
-      primaryLabel:"Go to Cart",
-      secondaryLabel:"Comparison",
+      title:"我自己烤",
+      meta:"加入購物車 → 前往結帳",
+      primaryLabel:"前往購物車",
+      secondaryLabel:"方案比較",
       onPrimary: ()=>go("/cart"),
       onSecondary: ()=>go("/comparison")
     });
@@ -550,39 +550,39 @@
     wrap.className="page";
     wrap.innerHTML = `
       <div class="card">
-        <div class="imgPh">HERO IMAGE</div>
+        <div class="imgPh">主視覺</div>
         <div class="pad">
-          <div class="h1" style="margin:0 0 6px;">Onsite Service LP</div>
-          <div class="sub" style="margin:0;">Promise (1 line).</div>
+          <div class="h1" style="margin:0 0 6px;">來幫我烤｜你聊天，我來顧流程</div>
+          <div class="sub" style="margin:0;">不需要顧火、分配、收尾（流程我們帶）</div>
         </div>
       </div>
 
       <div class="section">
-        <div class="kicker">PLANS</div>
+        <div class="kicker">代烤方案</div>
         <div id="svcList"></div>
       </div>
 
       <div class="section card">
         <div class="pad">
-          <div class="kicker">PROCESS (4 STEPS)</div>
+          <div class="kicker">服務流程（4 步驟）</div>
           <div class="twoCol" style="margin-top:10px;">
-            <div class="note"><b>Step 1</b><br/>Request</div>
-            <div class="note"><b>Step 2</b><br/>Confirm</div>
-            <div class="note"><b>Step 3</b><br/>Onsite</div>
-            <div class="note"><b>Step 4</b><br/>Finish</div>
+            <div class="note"><b>Step 1</b><br/>提出需求</div>
+            <div class="note"><b>Step 2</b><br/>確認內容</div>
+            <div class="note"><b>Step 3</b><br/>到場代烤</div>
+            <div class="note"><b>Step 4</b><br/>收尾完成</div>
           </div>
         </div>
       </div>
 
       <div class="section">
-        <div class="kicker">FAQ ACCORDION</div>
+        <div class="kicker">常見問題</div>
         <details>
-          <summary>Question</summary>
-          <div class="accBody">Answer (2–4 lines).</div>
+          <summary>代烤需要準備什麼？</summary>
+          <div class="accBody">示意：場地與插座即可，其餘我們協助。</div>
         </details>
         <details>
-          <summary>Question</summary>
-          <div class="accBody">Answer (2–4 lines).</div>
+          <summary>下雨怎麼辦？</summary>
+          <div class="accBody">示意：依場地狀況提供替代方案或調整。</div>
         </details>
       </div>
     `;
@@ -595,7 +595,7 @@
           <div class="setTop">
             <div>
               <div class="setName">${s.name}</div>
-              <div class="muted">Best for: ${s.best}</div>
+              <div class="muted">適合：${s.best}</div>
             </div>
             <div class="price">${money(s.price)}</div>
           </div>
@@ -603,10 +603,10 @@
             ${s.highlights.map(h=>`<li>${h}</li>`).join("")}
           </ul>
           <div class="btnRow">
-            <button class="btn btnPrimary" data-add="${s.id}">Add to Cart</button>
-            <button class="btn" data-detail="${s.id}">See Details</button>
+            <button class="btn btnPrimary" data-add="${s.id}">加入購物車</button>
+            <button class="btn" data-detail="${s.id}">看內容</button>
           </div>
-          <div class="mini">Note: Service items can be checked out here (cart/checkout supported).</div>
+          <div class="mini">備註：本示意站支援加入購物車與結帳（不導聊天）。</div>
         </div>
       </div>
     `).join("");
@@ -627,10 +627,10 @@
     });
 
     setBottomBar({
-      title:"Onsite Service",
-      meta:"Add plan → Cart",
-      primaryLabel:"Go to Cart",
-      secondaryLabel:"FAQ",
+      title:"來幫我烤",
+      meta:"加入方案 → 前往結帳",
+      primaryLabel:"前往購物車",
+      secondaryLabel:"常見問題",
       onPrimary: ()=>go("/cart"),
       onSecondary: ()=>go("/faq")
     });
@@ -640,8 +640,8 @@
     const wrap = document.createElement("div");
     wrap.className="page";
     wrap.innerHTML = `
-      <div class="h1">Comparison</div>
-      <div class="sub">3 cards (stacked). Each has Quick Add.</div>
+      <div class="h1">方案比較</div>
+      <div class="sub">三張卡片（直式堆疊），每張都可直接加入購物車。</div>
       <div id="cmp"></div>
     `;
     el.appendChild(wrap);
@@ -653,18 +653,18 @@
           <div class="setTop">
             <div>
               <div class="setName">${s.name}</div>
-              <div class="muted">Best for: ${s.best}</div>
+              <div class="muted">適合：${s.best}</div>
             </div>
             <div class="price">${money(s.price)}</div>
           </div>
           <div class="chips">
-            <span class="tag">Feature</span>
-            <span class="tag">Feature</span>
-            <span class="tag">Feature</span>
+            <span class="tag">特色</span>
+            <span class="tag">特色</span>
+            <span class="tag">特色</span>
           </div>
           <div class="btnRow" style="margin-top:10px;">
-            <button class="btn btnPrimary" data-add="${s.id}">Quick Add</button>
-            <button class="btn" data-detail="${s.id}">See Details</button>
+            <button class="btn btnPrimary" data-add="${s.id}">加入購物車</button>
+            <button class="btn" data-detail="${s.id}">看內容</button>
           </div>
         </div>
       </div>
@@ -685,10 +685,10 @@
     });
 
     setBottomBar({
-      title:"Comparison",
-      meta:"Quick Add available",
-      primaryLabel:"Go to Cart",
-      secondaryLabel:"Buy Yourself LP",
+      title:"方案比較",
+      meta:"可直接加入購物車",
+      primaryLabel:"前往購物車",
+      secondaryLabel:"回到我自己烤",
       onPrimary: ()=>go("/cart"),
       onSecondary: ()=>go("/buy-yourself")
     });
@@ -698,27 +698,27 @@
     const wrap = document.createElement("div");
     wrap.className="page";
     wrap.innerHTML = `
-      <div class="h1">FAQ</div>
-      <div class="sub">Accordion / Tabs (simplified as sections).</div>
+      <div class="h1">常見問題</div>
+      <div class="sub">以分類 + 手風琴為主（示意）。</div>
 
       <div class="section">
-        <div class="kicker">BUY YOURSELF</div>
-        <details open><summary>Question</summary><div class="accBody">Answer.</div></details>
-        <details><summary>Question</summary><div class="accBody">Answer.</div></details>
-        <details><summary>Question</summary><div class="accBody">Answer.</div></details>
+        <div class="kicker">我自己烤</div>
+        <details open><summary>出貨與到貨怎麼看？</summary><div class="accBody">示意：依公告出貨區間安排，避免最後一刻才備貨。</div></details>
+        <details><summary>退冰／保存怎麼做？</summary><div class="accBody">示意：提供簡易指引，降低失敗率。</div></details>
+        <details><summary>要怎麼烤才不容易失手？</summary><div class="accBody">示意：用「開箱順序」引導你一步步完成。</div></details>
       </div>
 
       <div class="section">
-        <div class="kicker">ONSITE SERVICE</div>
-        <details><summary>Question</summary><div class="accBody">Answer.</div></details>
-        <details><summary>Question</summary><div class="accBody">Answer.</div></details>
+        <div class="kicker">來幫我烤</div>
+        <details><summary>需要幾個人？</summary><div class="accBody">示意：依人數/場地提供對應方案。</div></details>
+        <details><summary>場地限制怎麼處理？</summary><div class="accBody">示意：提早確認插座/動線/遮雨即可。</div></details>
       </div>
 
       <div class="section note">
-        <b>Support</b><br/>
-        This prototype keeps checkout on-site. Contact info goes to Contact page.
+        <b>支援原則</b><br/>
+        此示意站維持「站內結帳」主流程。聯絡資訊放在「聯絡方式」頁，避免干擾轉換。
         <div style="margin-top:10px;">
-          <button class="btn btnWide" id="goContact">Go to Contact</button>
+          <button class="btn btnWide" id="goContact">前往聯絡方式</button>
         </div>
       </div>
     `;
@@ -726,10 +726,10 @@
     wrap.querySelector("#goContact").onclick = ()=>go("/contact");
 
     setBottomBar({
-      title:"FAQ",
-      meta:"Self-service first",
-      primaryLabel:"Buy Yourself",
-      secondaryLabel:"Onsite Service",
+      title:"常見問題",
+      meta:"先自助解惑",
+      primaryLabel:"我自己烤",
+      secondaryLabel:"來幫我烤",
       onPrimary: ()=>go("/buy-yourself"),
       onSecondary: ()=>go("/onsite-service")
     });
@@ -740,8 +740,8 @@
     wrap.className="page";
     const items = state.cart;
     wrap.innerHTML = `
-      <div class="h1">Cart</div>
-      <div class="sub">Review items / adjust qty / proceed to checkout.</div>
+      <div class="h1">購物車</div>
+      <div class="sub">確認品項／調整數量／前往結帳。</div>
 
       <div class="section card">
         <div class="pad" id="cartList"></div>
@@ -750,12 +750,12 @@
       <div class="section card">
         <div class="pad">
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div class="kicker">TOTAL</div>
+            <div class="kicker">合計</div>
             <div style="font-weight:900; font-size:16px;">${money(cartTotal())}</div>
           </div>
           <div class="hr"></div>
-          <button class="btn btnPrimary btnWide" id="goCheckout">Proceed to Checkout</button>
-          <div class="mini" style="margin-top:10px;">No LINE CTA here (do not distract checkout).</div>
+          <button class="btn btnPrimary btnWide" id="goCheckout">前往結帳</button>
+          <div class="mini" style="margin-top:10px;">提醒：此頁不放聊天導流（避免干擾結帳）。</div>
         </div>
       </div>
     `;
@@ -763,8 +763,8 @@
 
     const list = wrap.querySelector("#cartList");
     if(items.length===0){
-      list.innerHTML = `<div class="muted">Cart is empty.</div>
-        <div style="margin-top:10px;"><button class="btn btnWide" id="goShop">Go to Sets</button></div>`;
+      list.innerHTML = `<div class="muted">購物車目前沒有商品。</div>
+        <div style="margin-top:10px;"><button class="btn btnWide" id="goShop">回到推薦方案</button></div>`;
       wrap.querySelector("#goShop").onclick = ()=>go("/buy-yourself");
       wrap.querySelector("#goCheckout").onclick = ()=>go("/checkout");
       wrap.querySelector("#goCheckout").disabled = true;
@@ -775,12 +775,12 @@
       <div style="display:flex; justify-content:space-between; gap:10px; align-items:center; padding:10px 0; border-bottom:1px solid var(--line);">
         <div style="flex:1;">
           <div style="font-weight:800;">${it.name}</div>
-          <div class="mini">${money(it.price)} • Type: ${it.type}</div>
+          <div class="mini">${money(it.price)} • 類型：${it.type}</div>
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
-          <button class="iconBtn" data-minus="${it.id}" aria-label="Minus">−</button>
+          <button class="iconBtn" data-minus="${it.id}" aria-label="減少">−</button>
           <div style="min-width:24px; text-align:center; font-weight:800;">${it.qty}</div>
-          <button class="iconBtn" data-plus="${it.id}" aria-label="Plus">＋</button>
+          <button class="iconBtn" data-plus="${it.id}" aria-label="增加">＋</button>
         </div>
       </div>
     `).join("");
@@ -791,10 +791,10 @@
     wrap.querySelector("#goCheckout").onclick = ()=>go("/checkout");
 
     setBottomBar({
-      title:"Cart",
-      meta:`Total ${money(cartTotal())}`,
-      primaryLabel:"Checkout",
-      secondaryLabel:"Add More",
+      title:"購物車",
+      meta:`合計 ${money(cartTotal())}`,
+      primaryLabel:"去結帳",
+      secondaryLabel:"再加一點",
       onPrimary: ()=>go("/checkout"),
       onSecondary: ()=>go("/buy-yourself")
     });
@@ -804,46 +804,46 @@
     const wrap = document.createElement("div");
     wrap.className="page";
     wrap.innerHTML = `
-      <div class="h1">Checkout</div>
-      <div class="sub">Minimal fields (wireframe).</div>
+      <div class="h1">結帳</div>
+      <div class="sub">最小欄位示意（wireframe）。</div>
 
       <div class="section card">
         <div class="pad">
-          <div class="kicker">CONTACT</div>
-          <div class="field"><input placeholder="Name" /></div>
-          <div class="field"><input placeholder="Phone" /></div>
-          <div class="field"><input placeholder="Address / Location" /></div>
-          <div class="kicker" style="margin-top:8px;">PAYMENT</div>
+          <div class="kicker">訂購人資料</div>
+          <div class="field"><input placeholder="姓名" /></div>
+          <div class="field"><input placeholder="電話" /></div>
+          <div class="field"><input placeholder="地址 / 配送地點" /></div>
+          <div class="kicker" style="margin-top:8px;">付款方式</div>
           <div class="chips" style="margin-top:8px;">
-            <span class="chip">Option</span>
-            <span class="chip">Option</span>
-            <span class="chip">Option</span>
+            <span class="chip">選項</span>
+            <span class="chip">選項</span>
+            <span class="chip">選項</span>
           </div>
           <div class="hr"></div>
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div class="kicker">TOTAL</div>
+            <div class="kicker">合計</div>
             <div style="font-weight:900; font-size:16px;">${money(cartTotal())}</div>
           </div>
-          <button class="btn btnPrimary btnWide" style="margin-top:10px;" id="placeOrder">Place Order</button>
-          <div class="mini" style="margin-top:10px;">Checkout should not show LINE CTA (keep focus).</div>
+          <button class="btn btnPrimary btnWide" style="margin-top:10px;" id="placeOrder">送出訂單</button>
+          <div class="mini" style="margin-top:10px;">提醒：結帳頁保持聚焦（不放聊天導流）。</div>
         </div>
       </div>
     `;
     el.appendChild(wrap);
 
     wrap.querySelector("#placeOrder").onclick = ()=>{
-      if(state.cart.length===0){ toast("Cart is empty"); return; }
+      if(state.cart.length===0){ toast("購物車是空的"); return; }
       state.cart = [];
-      toast("Order placed (demo)");
+      toast("訂單已送出（示意）");
       go("/home");
       render();
     };
 
     setBottomBar({
-      title:"Checkout",
-      meta:"Focus on completion",
-      primaryLabel:"Place Order",
-      secondaryLabel:"Back to Cart",
+      title:"結帳",
+      meta:"聚焦完成訂單",
+      primaryLabel:"送出訂單",
+      secondaryLabel:"回到購物車",
       onPrimary: ()=>wrap.querySelector("#placeOrder").click(),
       onSecondary: ()=>go("/cart")
     });
@@ -856,36 +856,36 @@
     wrap.className="page";
 
     if(!item){
-      wrap.innerHTML = `<div class="h1">Product</div><div class="sub">Not found.</div>`;
+      wrap.innerHTML = `<div class="h1">商品頁</div><div class="sub">找不到此品項。</div>`;
       el.appendChild(wrap);
       return;
     }
 
     wrap.innerHTML = `
       <div class="card">
-        <div class="imgPh">PRODUCT IMAGE</div>
+        <div class="imgPh">商品圖</div>
         <div class="pad">
           <div class="h1" style="margin:0 0 6px;">${item.name}</div>
-          <div class="sub" style="margin:0;">Product Page (SEO + conversion).</div>
+          <div class="sub" style="margin:0;">商品頁（SEO + 轉換）示意。</div>
           <div class="hr"></div>
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div class="kicker">PRICE</div>
+            <div class="kicker">價格</div>
             <div style="font-weight:900;">${money(item.price)}</div>
           </div>
           <div class="hr"></div>
-          <div class="kicker">HIGHLIGHTS</div>
+          <div class="kicker">重點</div>
           <ul>
-            ${(item.highlights||["Feature","Feature","Feature"]).map(h=>`<li>${h}</li>`).join("")}
+            ${(item.highlights||["特色","特色","特色"]).map(h=>`<li>${h}</li>`).join("")}
           </ul>
-          <button class="btn btnPrimary btnWide" id="add">Add to Cart</button>
-          <button class="btn btnWide" style="margin-top:10px;" id="goCompare">Go to Comparison</button>
+          <button class="btn btnPrimary btnWide" id="add">加入購物車</button>
+          <button class="btn btnWide" style="margin-top:10px;" id="goCompare">前往方案比較</button>
         </div>
       </div>
 
       <div class="section">
-        <div class="kicker">FAQ SNIPPET</div>
-        <details><summary>Question</summary><div class="accBody">Answer.</div></details>
-        <details><summary>Question</summary><div class="accBody">Answer.</div></details>
+        <div class="kicker">常見問題（摘錄）</div>
+        <details><summary>問題</summary><div class="accBody">回答（示意）。</div></details>
+        <details><summary>問題</summary><div class="accBody">回答（示意）。</div></details>
       </div>
     `;
     el.appendChild(wrap);
@@ -894,10 +894,10 @@
     wrap.querySelector("#goCompare").onclick = ()=>go("/comparison");
 
     setBottomBar({
-      title:"Product",
-      meta:"Add to cart",
-      primaryLabel:"Go to Cart",
-      secondaryLabel:"Add",
+      title:"商品頁",
+      meta:"加入購物車",
+      primaryLabel:"前往購物車",
+      secondaryLabel:"再加一份",
       onPrimary: ()=>go("/cart"),
       onSecondary: ()=>wrap.querySelector("#add").click()
     });
@@ -907,16 +907,16 @@
     const wrap = document.createElement("div");
     wrap.className="page";
     wrap.innerHTML = `
-      <div class="h1">About</div>
-      <div class="sub">Trust page (short).</div>
-      <div class="section card"><div class="pad">Content block</div></div>
+      <div class="h1">關於我們</div>
+      <div class="sub">信任資產頁（短版示意）。</div>
+      <div class="section card"><div class="pad">內容區塊（品牌故事／出貨制度／服務承諾）</div></div>
     `;
     el.appendChild(wrap);
     setBottomBar({
-      title:"About",
-      meta:"Trust",
-      primaryLabel:"Buy Yourself",
-      secondaryLabel:"Onsite Service",
+      title:"關於我們",
+      meta:"建立信任",
+      primaryLabel:"我自己烤",
+      secondaryLabel:"來幫我烤",
       onPrimary: ()=>go("/buy-yourself"),
       onSecondary: ()=>go("/onsite-service")
     });
@@ -926,29 +926,29 @@
     const wrap = document.createElement("div");
     wrap.className="page";
     wrap.innerHTML = `
-      <div class="h1">Contact</div>
-      <div class="sub">Contact info (no forced chat).</div>
+      <div class="h1">聯絡方式</div>
+      <div class="sub">聯絡資訊（不強迫聊天）。</div>
       <div class="section card">
         <div class="pad">
-          <div class="kicker">INFO</div>
-          <div class="note">Phone / Email / Address</div>
+          <div class="kicker">資訊</div>
+          <div class="note">電話 / Email / 地址（示意）</div>
           <div class="hr"></div>
-          <div class="kicker">LINKS</div>
+          <div class="kicker">社群</div>
           <div class="chips">
-            <span class="chip">LINE</span>
+            <span class="chip">LINE（支援用）</span>
             <span class="chip">Instagram</span>
             <span class="chip">Facebook</span>
           </div>
-          <div class="mini" style="margin-top:10px;">LINE is support channel, not checkout channel.</div>
+          <div class="mini" style="margin-top:10px;">提醒：LINE 是支援渠道，不是結帳渠道。</div>
         </div>
       </div>
     `;
     el.appendChild(wrap);
     setBottomBar({
-      title:"Contact",
-      meta:"Support",
-      primaryLabel:"FAQ",
-      secondaryLabel:"Home",
+      title:"聯絡方式",
+      meta:"支援資訊",
+      primaryLabel:"常見問題",
+      secondaryLabel:"回首頁",
       onPrimary: ()=>go("/faq"),
       onSecondary: ()=>go("/home")
     });
@@ -957,13 +957,13 @@
   // ---------- Search ----------
   function buildSearchIndex(){
     state.searchIndex = [
-      ...state.sets.map(x=>({label:x.name, go:`/product/${x.id}`, keywords:["buy", "set", "starter", "party", "king", x.name.toLowerCase()]})),
-      ...state.services.map(x=>({label:x.name, go:`/product/${x.id}`, keywords:["onsite","service","plan","quote", x.name.toLowerCase()]})),
-      { label:"Buy Yourself LP", go:"/buy-yourself", keywords:["buy", "yourself", "lp"] },
-      { label:"Onsite Service LP", go:"/onsite-service", keywords:["onsite", "service", "lp"] },
-      { label:"Comparison", go:"/comparison", keywords:["compare", "comparison"] },
-      { label:"FAQ", go:"/faq", keywords:["faq", "question"] },
-      { label:"Cart", go:"/cart", keywords:["cart", "checkout"] },
+      ...state.sets.map(x=>({label:x.name, go:`/product/${x.id}`, keywords:["buy", "set", "starter", "party", "king", "入門", "派對", "豪華", x.name.toLowerCase()]})),
+      ...state.services.map(x=>({label:x.name, go:`/product/${x.id}`, keywords:["onsite","service","plan","quote", "代烤", "方案", x.name.toLowerCase()]})),
+      { label:"我自己烤｜LP", go:"/buy-yourself", keywords:["buy", "yourself", "lp", "自己烤"] },
+      { label:"來幫我烤｜LP", go:"/onsite-service", keywords:["onsite", "service", "lp", "代烤"] },
+      { label:"方案比較", go:"/comparison", keywords:["compare", "comparison", "比較"] },
+      { label:"常見問題", go:"/faq", keywords:["faq", "question", "問題"] },
+      { label:"購物車", go:"/cart", keywords:["cart", "checkout", "購物車", "結帳"] },
     ];
   }
 
@@ -1028,7 +1028,7 @@
 
     searchResults.innerHTML = results.length
       ? results.map(r=>`<div class="result" data-go="${r.go}">${r.label}</div>`).join("")
-      : (query==="" ? `<div class="mini">Type to search.</div>` : `<div class="mini">No results.</div>`);
+      : (query==="" ? `<div class="mini">請輸入關鍵字開始搜尋。</div>` : `<div class="mini">沒有符合的結果。</div>`);
 
     searchResults.querySelectorAll(".result").forEach(r=>{
       r.onclick = ()=>{
@@ -1041,7 +1041,7 @@
   // Cart badge (simple count in title tooltip)
   function syncCartBadge(){
     const count = state.cart.reduce((s,x)=>s+x.qty,0);
-    btnCart.title = `Cart (${count})`;
+    btnCart.title = `購物車（${count}）`;
   }
 
   // ---------- Init ----------
