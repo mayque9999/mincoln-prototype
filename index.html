@@ -171,18 +171,8 @@
       gap:10px;
     }
     .barLeft{display:flex; flex-direction:column; gap:2px;}
-    .barTitle{
-      font-weight:600;
-      font-size:11px;
-      color:var(--muted);
-      letter-spacing:.2px;
-    }
-    .barMeta{
-      font-size:11px;
-      color:var(--muted);
-      opacity:.85;
-    }
-    .barMeta:empty{display:none;}
+    .barTitle{font-weight:700; font-size:12px;}
+    .barMeta{font-size:11px; color:var(--muted);}
 
     .pill{
       height:40px; padding:0 14px; border-radius:999px;
@@ -271,7 +261,7 @@
       <div class="barInner">
         <div class="barCard" id="bottomBar" style="display:none;">
           <div class="barLeft">
-            <div class="barTitle" id="barTitle">小提示</div>
+            <div class="barTitle" id="barTitle">下一步</div>
             <div class="barMeta" id="barMeta"></div>
           </div>
           <button class="pill pillPrimary" id="barPrimary">繼續</button>
@@ -286,7 +276,7 @@
       <div class="navItem" data-go="#/home">首頁 <small>分流</small></div>
       <div class="navItem" data-go="#/buy-yourself">我自己烤 <small>LP</small></div>
       <div class="navItem" data-go="#/onsite-service">來幫我烤 <small>LP</small></div>
-      <div class="navItem" data-go="#/shop">全商品 <small>直接選購</small></div>
+      <div class="navItem" data-go="#/shop">瀏覽全商品 <small>直接選購</small></div>
       <div class="navItem" data-go="#/faq">常見問題 <small>Page</small></div>
       <div class="navItem" data-go="#/about">關於我們 <small>信任</small></div>
       <div class="navItem" data-go="#/contact">聯絡方式 <small>資訊</small></div>
@@ -413,7 +403,7 @@
       return;
     }
     bottomBar.style.display="flex";
-    barTitle.textContent = cfg.title || "小提示";
+    barTitle.textContent = cfg.title || "下一步";
     barMeta.textContent = cfg.meta || "";
     barPrimary.textContent = cfg.primaryLabel || "繼續";
     barPrimary.onclick = cfg.onPrimary || (()=>{});
@@ -425,7 +415,6 @@
     root.innerHTML = "";
     setBottomBar(null);
 
-    // show LINE only on onsite LP + onsite product pages
     const isOnsiteLP = path === "/onsite-service";
     const isOnsiteProduct = (path === "/product/:id") && state.services.some(s => s.id === params.id);
     btnLine.style.display = (isOnsiteLP || isOnsiteProduct) ? "flex" : "none";
@@ -465,13 +454,14 @@
         </div>
       </div>
 
+      <!-- NEW: Shop entry card -->
       <div class="section card routeCard">
         <div class="imgPh">情境圖</div>
         <div class="pad">
-          <div class="routeTitle">直接選購</div>
-          <div class="muted">我知道我要什麼（去全商品）</div>
+          <div class="routeTitle">瀏覽全商品</div>
+          <div class="muted">我知道我要什麼（直接選購）</div>
           <div class="btnRow">
-            <button class="btn btnPrimary btnWide" id="goShopAll">瀏覽全商品</button>
+            <button class="btn btnPrimary btnWide" id="goShop">直接進去選購</button>
           </div>
         </div>
       </div>
@@ -498,14 +488,14 @@
 
     wrap.querySelector("#goBuy").onclick = ()=>go("/buy-yourself");
     wrap.querySelector("#goOnsite").onclick = ()=>go("/onsite-service");
-    wrap.querySelector("#goShopAll").onclick = ()=>go("/shop");
+    wrap.querySelector("#goShop").onclick = ()=>go("/shop");
     wrap.querySelector("#goFaq").onclick = ()=>go("/faq");
 
     setBottomBar({
-      title:"小提示",
-      meta:"先選一種走法就好 🙂",
-      primaryLabel:"看推薦方案",
-      onPrimary: ()=>go("/buy-yourself")
+      title:"首頁",
+      meta:"先選路徑",
+      primaryLabel:"直接進去選購",
+      onPrimary: ()=>go("/shop")
     });
   }
 
@@ -518,6 +508,15 @@
         <div class="pad">
           <div class="h1" style="margin:0 0 6px;">我自己烤｜懶人也能成功</div>
           <div class="sub" style="margin:0;">不需要研究怎麼配，照著做就好</div>
+        </div>
+      </div>
+
+      <!-- NEW: Shop entry inside LP -->
+      <div class="section card">
+        <div class="pad">
+          <div class="kicker">我知道我要什麼</div>
+          <div class="sub" style="margin:6px 0 10px;">想直接挑？全商品都在這裡。</div>
+          <button class="btn btnPrimary btnWide" id="goShopFromBuy">瀏覽全商品</button>
         </div>
       </div>
 
@@ -534,14 +533,6 @@
             <div class="note"><b>Step 2</b><br/>主菜上場（示意）</div>
             <div class="note"><b>Step 3</b><br/>收尾剛剛好（示意）</div>
           </div>
-        </div>
-      </div>
-
-      <div class="section card">
-        <div class="pad">
-          <div class="kicker">我知道我要什麼</div>
-          <div class="sub" style="margin:6px 0 10px;">想直接挑？全商品都在這裡。</div>
-          <button class="btn btnWide" id="goShopFromBuy">瀏覽全商品</button>
         </div>
       </div>
 
@@ -563,6 +554,8 @@
       </div>
     `;
     el.appendChild(wrap);
+
+    wrap.querySelector("#goShopFromBuy").onclick = ()=>go("/shop");
 
     const list = wrap.querySelector("#setList");
     list.innerHTML = state.sets.map(s => `
@@ -602,12 +595,11 @@
     });
 
     wrap.querySelector("#goFaq2").onclick = ()=>go("/faq");
-    wrap.querySelector("#goShopFromBuy").onclick = ()=>go("/shop");
 
     setBottomBar({
-      title:"小提示",
-      meta:"有喜歡的先放購物車，等等再一起結 🙂",
-      primaryLabel:"看購物車",
+      title:"我自己烤",
+      meta:"加入後去結帳",
+      primaryLabel:"前往購物車",
       onPrimary: ()=>go("/cart")
     });
   }
@@ -621,6 +613,15 @@
         <div class="pad">
           <div class="h1" style="margin:0 0 6px;">來幫我烤｜你聊天，我來顧流程</div>
           <div class="sub" style="margin:0;">不需要顧火、分配、收尾（流程我們帶）</div>
+        </div>
+      </div>
+
+      <!-- NEW: Shop entry inside LP -->
+      <div class="section card">
+        <div class="pad">
+          <div class="kicker">我知道我要什麼</div>
+          <div class="sub" style="margin:6px 0 10px;">若你已經選好食材／方案，也可以直接進全商品。</div>
+          <button class="btn btnPrimary btnWide" id="goShopFromOnsite">瀏覽全商品</button>
         </div>
       </div>
 
@@ -652,14 +653,6 @@
         </div>
       </div>
 
-      <div class="section card">
-        <div class="pad">
-          <div class="kicker">我知道我要什麼</div>
-          <div class="sub" style="margin:6px 0 10px;">想直接挑？全商品也可以一次看。</div>
-          <button class="btn btnWide" id="goShopFromOnsite">瀏覽全商品</button>
-        </div>
-      </div>
-
       <div class="section">
         <div class="kicker">常見問題</div>
         <details>
@@ -674,8 +667,8 @@
     `;
     el.appendChild(wrap);
 
-    wrap.querySelector("#goLineHelp").onclick = ()=> window.open(LINE_URL, "_blank");
     wrap.querySelector("#goShopFromOnsite").onclick = ()=>go("/shop");
+    wrap.querySelector("#goLineHelp").onclick = ()=> window.open(LINE_URL, "_blank");
 
     const list = wrap.querySelector("#svcList");
     list.innerHTML = state.services.map(s => `
@@ -716,9 +709,9 @@
     });
 
     setBottomBar({
-      title:"小提示",
-      meta:"方案先放購物車，細節可以慢慢看 🙂",
-      primaryLabel:"看購物車",
+      title:"來幫我烤",
+      meta:"加入後去結帳",
+      primaryLabel:"前往購物車",
       onPrimary: ()=>go("/cart")
     });
   }
@@ -727,13 +720,13 @@
     const wrap = document.createElement("div");
     wrap.className="page";
     wrap.innerHTML = `
-      <div class="h1">全商品</div>
-      <div class="sub">知道自己要什麼？直接進來挑就好 🙂</div>
+      <div class="h1">瀏覽全商品</div>
+      <div class="sub">知道自己要什麼？直接選購就好。</div>
 
       <div class="section card">
         <div class="pad">
           <div class="kicker">我自己烤｜推薦方案</div>
-          <div class="mini" style="margin-top:6px;">固定組合不踩雷，適合想省心的人。</div>
+          <div class="mini" style="margin-top:6px;">想省心就選固定組合，不用研究怎麼配。</div>
         </div>
       </div>
       <div id="shopSets"></div>
@@ -809,9 +802,9 @@
     });
 
     setBottomBar({
-      title:"小提示",
-      meta:"喜歡的先放購物車，等等再一起結 🙂",
-      primaryLabel:"看購物車",
+      title:"全商品",
+      meta:"選好就結帳",
+      primaryLabel:"前往購物車",
       onPrimary: ()=>go("/cart")
     });
   }
@@ -846,7 +839,6 @@
     `;
     el.appendChild(wrap);
     wrap.querySelector("#goContact").onclick = ()=>go("/contact");
-
     setBottomBar(null);
   }
 
@@ -879,7 +871,7 @@
     const list = wrap.querySelector("#cartList");
     if(items.length===0){
       list.innerHTML = `<div class="muted">購物車目前沒有商品。</div>
-        <div style="margin-top:10px;"><button class="btn btnWide" id="goShop">回到全商品</button></div>`;
+        <div style="margin-top:10px;"><button class="btn btnWide" id="goShop">去瀏覽全商品</button></div>`;
       wrap.querySelector("#goShop").onclick = ()=>go("/shop");
       wrap.querySelector("#goCheckout").onclick = ()=>go("/checkout");
       wrap.querySelector("#goCheckout").disabled = true;
@@ -906,9 +898,9 @@
     wrap.querySelector("#goCheckout").onclick = ()=>go("/checkout");
 
     setBottomBar({
-      title:"小提示",
-      meta:`目前合計 ${money(cartTotal())}（確認一下就好）`,
-      primaryLabel:"前往結帳",
+      title:"購物車",
+      meta:`合計 ${money(cartTotal())}`,
+      primaryLabel:"去結帳",
       onPrimary: ()=>go("/checkout")
     });
   }
@@ -984,7 +976,7 @@
             ${(item.highlights||["特色","特色","特色"]).map(h=>`<li>${h}</li>`).join("")}
           </ul>
           <button class="btn btnPrimary btnWide" id="add">加入購物車</button>
-          <button class="btn btnWide" style="margin-top:10px;" id="goShop">瀏覽全商品</button>
+          <button class="btn btnWide" style="margin-top:10px;" id="goShop">回到全商品</button>
 
           ${item.type==="service" ? `
             <div class="hr"></div>
@@ -1013,9 +1005,9 @@
     if(go2) go2.onclick = ()=> window.open(LINE_URL, "_blank");
 
     setBottomBar({
-      title:"小提示",
-      meta:"加入後再去結帳就好 🙂",
-      primaryLabel:"看購物車",
+      title:"商品頁",
+      meta:"加入後去結帳",
+      primaryLabel:"前往購物車",
       onPrimary: ()=>go("/cart")
     });
   }
@@ -1064,7 +1056,7 @@
       ...state.services.map(x=>({label:x.name, go:`/product/${x.id}`, keywords:["onsite","service","plan","quote", "代烤", "方案", x.name.toLowerCase()]})),
       { label:"我自己烤｜LP", go:"/buy-yourself", keywords:["buy", "yourself", "lp", "自己烤"] },
       { label:"來幫我烤｜LP", go:"/onsite-service", keywords:["onsite", "service", "lp", "代烤"] },
-      { label:"全商品", go:"/shop", keywords:["shop","all","catalog","全商品","直接選購","選購"] },
+      { label:"瀏覽全商品", go:"/shop", keywords:["shop","all","catalog","全商品","直接選購","選購"] },
       { label:"常見問題", go:"/faq", keywords:["faq", "question", "問題"] },
       { label:"購物車", go:"/cart", keywords:["cart", "checkout", "購物車", "結帳"] },
     ];
@@ -1133,7 +1125,7 @@
     });
   }
 
-  // Cart badge (simple count in title tooltip)
+  // Cart badge
   function syncCartBadge(){
     const count = state.cart.reduce((s,x)=>s+x.qty,0);
     btnCart.title = `購物車（${count}）`;
