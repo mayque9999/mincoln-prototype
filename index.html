@@ -20,6 +20,7 @@
     a{color:inherit; text-decoration:none}
     button{font:inherit}
     .app{max-width:var(--max); margin:0 auto; min-height:100vh; background:var(--bg);}
+
     /* Header */
     .header{
       position:sticky; top:0; z-index:20;
@@ -51,6 +52,7 @@
       border-radius:12px;
       cursor:pointer;
     }
+
     /* Layout */
     .page{padding:14px 12px 90px;}
     .h1{font-size:22px; font-weight:800; line-height:1.2; margin:6px 0 8px;}
@@ -103,9 +105,11 @@
     .btnRow{display:flex; gap:10px; align-items:center;}
     .muted{color:var(--muted); font-size:12px;}
     .kicker{font-size:12px; color:#444; font-weight:700; letter-spacing:.2px;}
+
     /* Routing cards */
     .routeCard .pad{display:flex; flex-direction:column; gap:10px;}
     .routeTitle{font-size:16px; font-weight:800; margin:0;}
+
     /* Set cards */
     .setCard .pad{display:flex; flex-direction:column; gap:10px;}
     .setTop{display:flex; justify-content:space-between; align-items:flex-start; gap:10px;}
@@ -113,6 +117,7 @@
     .price{font-weight:800;}
     ul{margin:0; padding-left:18px;}
     li{margin:6px 0; font-size:13px; color:#333;}
+
     /* Accordion */
     details{
       border:1px solid var(--line);
@@ -125,7 +130,8 @@
     summary{cursor:pointer; font-weight:800; list-style:none;}
     summary::-webkit-details-marker{display:none;}
     .accBody{margin-top:8px; color:var(--muted); font-size:13px; line-height:1.4;}
-    /* Bottom bar */
+
+    /* Bottom bar — subtle version (UPDATED) */
     .bottomBar{
       position:fixed; left:0; right:0; bottom:0; z-index:30;
       display:flex; justify-content:center;
@@ -134,27 +140,32 @@
     .barInner{
       max-width:var(--max);
       width:100%;
-      padding:10px 12px 14px;
+      padding:8px 10px 10px; /* smaller */
       pointer-events:auto;
     }
     .barCard{
-      background:rgba(255,255,255,.92);
+      background:rgba(255,255,255,.85); /* lighter */
       border:1px solid var(--line);
-      border-radius:18px;
-      box-shadow: var(--shadow);
-      padding:10px;
-      display:flex; gap:10px; align-items:center; justify-content:space-between;
-      backdrop-filter: blur(8px);
+      border-radius:14px; /* smaller */
+      box-shadow: var(--shadow2); /* softer */
+      padding:8px 10px; /* smaller */
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      backdrop-filter: blur(6px);
+      gap:10px;
     }
     .barLeft{display:flex; flex-direction:column; gap:2px;}
-    .barTitle{font-weight:800; font-size:13px;}
-    .barMeta{font-size:12px; color:var(--muted);}
+    .barTitle{font-weight:700; font-size:12px;} /* smaller */
+    .barMeta{font-size:11px; color:var(--muted);} /* smaller */
+
     .pill{
       height:40px; padding:0 14px; border-radius:999px;
       border:1px solid var(--line);
       background:#fff; cursor:pointer;
     }
     .pillPrimary{background:var(--cta); color:var(--ctaInk); border-color:var(--cta);}
+
     /* Drawer + modal */
     .backdrop{
       position:fixed; inset:0; background:rgba(0,0,0,.35);
@@ -201,6 +212,7 @@
       cursor:pointer;
       background:#fff;
     }
+
     /* Tables / small */
     .hr{height:1px; background:var(--line); margin:10px 0;}
     .mini{font-size:12px; color:var(--muted);}
@@ -228,18 +240,15 @@
 
     <main id="appRoot"></main>
 
-    <!-- Bottom bar (contextual) -->
+    <!-- Bottom bar (contextual) — subtle HTML (UPDATED: single button) -->
     <div class="bottomBar">
       <div class="barInner">
         <div class="barCard" id="bottomBar" style="display:none;">
           <div class="barLeft">
-            <div class="barTitle" id="barTitle">行動提示</div>
-            <div class="barMeta" id="barMeta">說明</div>
+            <div class="barTitle" id="barTitle">下一步</div>
+            <div class="barMeta" id="barMeta"></div>
           </div>
-          <div style="display:flex; gap:10px;">
-            <button class="pill" id="barSecondary">次要</button>
-            <button class="pill pillPrimary" id="barPrimary">主要</button>
-          </div>
+          <button class="pill pillPrimary" id="barPrimary">繼續</button>
         </div>
       </div>
     </div>
@@ -358,20 +367,18 @@
   const barTitle = document.getElementById("barTitle");
   const barMeta = document.getElementById("barMeta");
   const barPrimary = document.getElementById("barPrimary");
-  const barSecondary = document.getElementById("barSecondary");
 
+  // UPDATED: single-action Bottom Bar
   function setBottomBar(cfg){
     if(!cfg){
       bottomBar.style.display="none";
       return;
     }
     bottomBar.style.display="flex";
-    barTitle.textContent = cfg.title || "行動提示";
+    barTitle.textContent = cfg.title || "下一步";
     barMeta.textContent = cfg.meta || "";
-    barPrimary.textContent = cfg.primaryLabel || "主要";
-    barSecondary.textContent = cfg.secondaryLabel || "次要";
+    barPrimary.textContent = cfg.primaryLabel || "繼續";
     barPrimary.onclick = cfg.onPrimary || (()=>{});
-    barSecondary.onclick = cfg.onSecondary || (()=>{});
   }
 
   function render(){
@@ -438,14 +445,12 @@
     wrap.querySelector("#goOnsite").onclick = ()=>go("/onsite-service");
     wrap.querySelector("#goFaq").onclick = ()=>go("/faq");
 
-    // Minimal, but we still provide a contextual bottom bar (not LINE)
+    // UPDATED: pick ONE "next step" only
     setBottomBar({
       title:"首頁",
       meta:"先選路徑",
       primaryLabel:"我自己烤",
-      secondaryLabel:"來幫我烤",
-      onPrimary: ()=>go("/buy-yourself"),
-      onSecondary: ()=>go("/onsite-service")
+      onPrimary: ()=>go("/buy-yourself")
     });
   }
 
@@ -537,11 +542,9 @@
 
     setBottomBar({
       title:"我自己烤",
-      meta:"加入購物車 → 前往結帳",
+      meta:"加入後去結帳",
       primaryLabel:"前往購物車",
-      secondaryLabel:"方案比較",
-      onPrimary: ()=>go("/cart"),
-      onSecondary: ()=>go("/comparison")
+      onPrimary: ()=>go("/cart")
     });
   }
 
@@ -628,11 +631,9 @@
 
     setBottomBar({
       title:"來幫我烤",
-      meta:"加入方案 → 前往結帳",
+      meta:"加入後去結帳",
       primaryLabel:"前往購物車",
-      secondaryLabel:"常見問題",
-      onPrimary: ()=>go("/cart"),
-      onSecondary: ()=>go("/faq")
+      onPrimary: ()=>go("/cart")
     });
   }
 
@@ -686,11 +687,9 @@
 
     setBottomBar({
       title:"方案比較",
-      meta:"可直接加入購物車",
+      meta:"比較完就下單",
       primaryLabel:"前往購物車",
-      secondaryLabel:"回到我自己烤",
-      onPrimary: ()=>go("/cart"),
-      onSecondary: ()=>go("/buy-yourself")
+      onPrimary: ()=>go("/cart")
     });
   }
 
@@ -725,14 +724,8 @@
     el.appendChild(wrap);
     wrap.querySelector("#goContact").onclick = ()=>go("/contact");
 
-    setBottomBar({
-      title:"常見問題",
-      meta:"先自助解惑",
-      primaryLabel:"我自己烤",
-      secondaryLabel:"來幫我烤",
-      onPrimary: ()=>go("/buy-yourself"),
-      onSecondary: ()=>go("/onsite-service")
-    });
+    // low priority: hide bottom bar on FAQ (UPDATED)
+    setBottomBar(null);
   }
 
   function pageCart(el){
@@ -794,9 +787,7 @@
       title:"購物車",
       meta:`合計 ${money(cartTotal())}`,
       primaryLabel:"去結帳",
-      secondaryLabel:"再加一點",
-      onPrimary: ()=>go("/checkout"),
-      onSecondary: ()=>go("/buy-yourself")
+      onPrimary: ()=>go("/checkout")
     });
   }
 
@@ -839,14 +830,8 @@
       render();
     };
 
-    setBottomBar({
-      title:"結帳",
-      meta:"聚焦完成訂單",
-      primaryLabel:"送出訂單",
-      secondaryLabel:"回到購物車",
-      onPrimary: ()=>wrap.querySelector("#placeOrder").click(),
-      onSecondary: ()=>go("/cart")
-    });
+    // UPDATED: hide bottom bar on Checkout (focus)
+    setBottomBar(null);
   }
 
   function pageProduct(el, params){
@@ -895,11 +880,9 @@
 
     setBottomBar({
       title:"商品頁",
-      meta:"加入購物車",
+      meta:"加入後去結帳",
       primaryLabel:"前往購物車",
-      secondaryLabel:"再加一份",
-      onPrimary: ()=>go("/cart"),
-      onSecondary: ()=>wrap.querySelector("#add").click()
+      onPrimary: ()=>go("/cart")
     });
   }
 
@@ -912,14 +895,8 @@
       <div class="section card"><div class="pad">內容區塊（品牌故事／出貨制度／服務承諾）</div></div>
     `;
     el.appendChild(wrap);
-    setBottomBar({
-      title:"關於我們",
-      meta:"建立信任",
-      primaryLabel:"我自己烤",
-      secondaryLabel:"來幫我烤",
-      onPrimary: ()=>go("/buy-yourself"),
-      onSecondary: ()=>go("/onsite-service")
-    });
+    // keep it subtle, no need bottom bar on About (UPDATED)
+    setBottomBar(null);
   }
 
   function pageContact(el){
@@ -944,14 +921,8 @@
       </div>
     `;
     el.appendChild(wrap);
-    setBottomBar({
-      title:"聯絡方式",
-      meta:"支援資訊",
-      primaryLabel:"常見問題",
-      secondaryLabel:"回首頁",
-      onPrimary: ()=>go("/faq"),
-      onSecondary: ()=>go("/home")
-    });
+    // no bottom bar on Contact (UPDATED)
+    setBottomBar(null);
   }
 
   // ---------- Search ----------
@@ -993,7 +964,6 @@
     if(!item) return;
     const goTo = item.getAttribute("data-go");
     if(goTo) go(goTo.replace("#",""));
-    if(item.id==="drawerClose") {}
     closeDrawer();
   });
 
