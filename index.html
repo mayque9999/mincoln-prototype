@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>名根烤肉｜Mobile-first 流程示意</title>
-  <meta name="description" content="Mobile-first 流程示意：首頁分流 + 兩條LP + 方案比較 + FAQ + 購物車/結帳（全站不導外部聊天，結帳留在站內）" />
+  <meta name="description" content="Mobile-first 流程示意：首頁分流 + 兩條LP + 全商品入口 + FAQ + 購物車/結帳（全站不導外部聊天，結帳留在站內）" />
   <style>
     :root{
       --bg:#f4f4f4; --card:#fff; --ink:#111; --muted:#666; --line:#ddd;
@@ -46,7 +46,7 @@
       cursor:pointer;
     }
 
-    /* NEW: subtle LINE button (shows only on onsite flow) */
+    /* subtle LINE button (shows only on onsite flow) */
     .lineBtn{
       height:var(--tap); width:var(--tap);
       border:1px solid var(--line);
@@ -146,7 +146,7 @@
     summary::-webkit-details-marker{display:none;}
     .accBody{margin-top:8px; color:var(--muted); font-size:13px; line-height:1.4;}
 
-    /* Bottom bar — subtle version (UPDATED) */
+    /* Bottom bar — subtle version */
     .bottomBar{
       position:fixed; left:0; right:0; bottom:0; z-index:30;
       display:flex; justify-content:center;
@@ -155,15 +155,15 @@
     .barInner{
       max-width:var(--max);
       width:100%;
-      padding:8px 10px 10px; /* smaller */
+      padding:8px 10px 10px;
       pointer-events:auto;
     }
     .barCard{
-      background:rgba(255,255,255,.85); /* lighter */
+      background:rgba(255,255,255,.85);
       border:1px solid var(--line);
-      border-radius:14px; /* smaller */
-      box-shadow: var(--shadow2); /* softer */
-      padding:8px 10px; /* smaller */
+      border-radius:14px;
+      box-shadow: var(--shadow2);
+      padding:8px 10px;
       display:flex;
       align-items:center;
       justify-content:space-between;
@@ -171,8 +171,18 @@
       gap:10px;
     }
     .barLeft{display:flex; flex-direction:column; gap:2px;}
-    .barTitle{font-weight:700; font-size:12px;} /* smaller */
-    .barMeta{font-size:11px; color:var(--muted);} /* smaller */
+    .barTitle{
+      font-weight:600;
+      font-size:11px;
+      color:var(--muted);
+      letter-spacing:.2px;
+    }
+    .barMeta{
+      font-size:11px;
+      color:var(--muted);
+      opacity:.85;
+    }
+    .barMeta:empty{display:none;}
 
     .pill{
       height:40px; padding:0 14px; border-radius:999px;
@@ -248,10 +258,7 @@
         <div class="logo" id="btnHome" title="回首頁">名根烤肉</div>
         <div class="rightIcons">
           <button class="iconBtn" id="btnSearch" aria-label="搜尋">🔍</button>
-
-          <!-- NEW: shows only on /onsite-service and onsite products -->
           <button class="lineBtn" id="btnLine" aria-label="LINE 支援" title="LINE 支援" style="display:none;">LINE</button>
-
           <button class="iconBtn" id="btnCart" aria-label="購物車">🛒</button>
         </div>
       </div>
@@ -259,12 +266,12 @@
 
     <main id="appRoot"></main>
 
-    <!-- Bottom bar (contextual) — subtle HTML (UPDATED: single button) -->
+    <!-- Bottom bar (contextual) -->
     <div class="bottomBar">
       <div class="barInner">
         <div class="barCard" id="bottomBar" style="display:none;">
           <div class="barLeft">
-            <div class="barTitle" id="barTitle">下一步</div>
+            <div class="barTitle" id="barTitle">小提示</div>
             <div class="barMeta" id="barMeta"></div>
           </div>
           <button class="pill pillPrimary" id="barPrimary">繼續</button>
@@ -279,7 +286,7 @@
       <div class="navItem" data-go="#/home">首頁 <small>分流</small></div>
       <div class="navItem" data-go="#/buy-yourself">我自己烤 <small>LP</small></div>
       <div class="navItem" data-go="#/onsite-service">來幫我烤 <small>LP</small></div>
-      <div class="navItem" data-go="#/comparison">方案比較 <small>LP</small></div>
+      <div class="navItem" data-go="#/shop">全商品 <small>直接選購</small></div>
       <div class="navItem" data-go="#/faq">常見問題 <small>Page</small></div>
       <div class="navItem" data-go="#/about">關於我們 <small>信任</small></div>
       <div class="navItem" data-go="#/contact">聯絡方式 <small>資訊</small></div>
@@ -293,7 +300,7 @@
         <input id="searchInput" placeholder="搜尋方案 / 單品 / 服務..." />
         <button class="btn" id="searchClose">關閉</button>
       </div>
-      <div class="mini">提示：試試「入門」「派對」「代烤」「比較」。</div>
+      <div class="mini">提示：試試「入門」「派對」「代烤」「全商品」。</div>
       <div class="list" id="searchResults"></div>
     </div>
 
@@ -317,7 +324,7 @@
     searchIndex: []
   };
 
-  // NEW: Replace with your real LINE OA URL
+  // Replace with your real LINE OA URL
   const LINE_URL = "https://line.me/R/ti/p/@YOUR_LINE_ID";
 
   function money(n){ return "NT$ " + n.toLocaleString("en-US"); }
@@ -363,7 +370,7 @@
     "/home": pageHome,
     "/buy-yourself": pageBuyYourself,
     "/onsite-service": pageOnsite,
-    "/comparison": pageComparison,
+    "/shop": pageShop,
     "/faq": pageFAQ,
     "/cart": pageCart,
     "/checkout": pageCheckout,
@@ -374,7 +381,6 @@
 
   function parseRoute(){
     const hash = location.hash.replace("#","") || "/home";
-    // dynamic route: /product/<id>
     if(hash.startsWith("/product/")) return { path:"/product/:id", params:{id: hash.split("/")[2] || ""} };
     return { path: hash, params:{} };
   }
@@ -394,22 +400,20 @@
   const btnMenu = document.getElementById("btnMenu");
   const btnHome = document.getElementById("btnHome");
   const btnSearch = document.getElementById("btnSearch");
-  const btnLine = document.getElementById("btnLine"); // NEW
+  const btnLine = document.getElementById("btnLine");
   const btnCart = document.getElementById("btnCart");
   const drawer = document.getElementById("drawer");
   const backdrop = document.getElementById("backdrop");
 
-  // NEW: header LINE click
   btnLine.onclick = ()=> window.open(LINE_URL, "_blank");
 
-  // UPDATED: single-action Bottom Bar
   function setBottomBar(cfg){
     if(!cfg){
       bottomBar.style.display="none";
       return;
     }
     bottomBar.style.display="flex";
-    barTitle.textContent = cfg.title || "下一步";
+    barTitle.textContent = cfg.title || "小提示";
     barMeta.textContent = cfg.meta || "";
     barPrimary.textContent = cfg.primaryLabel || "繼續";
     barPrimary.onclick = cfg.onPrimary || (()=>{});
@@ -421,7 +425,7 @@
     root.innerHTML = "";
     setBottomBar(null);
 
-    // NEW: show LINE only on onsite LP + onsite product pages
+    // show LINE only on onsite LP + onsite product pages
     const isOnsiteLP = path === "/onsite-service";
     const isOnsiteProduct = (path === "/product/:id") && state.services.some(s => s.id === params.id);
     btnLine.style.display = (isOnsiteLP || isOnsiteProduct) ? "flex" : "none";
@@ -461,6 +465,17 @@
         </div>
       </div>
 
+      <div class="section card routeCard">
+        <div class="imgPh">情境圖</div>
+        <div class="pad">
+          <div class="routeTitle">直接選購</div>
+          <div class="muted">我知道我要什麼（去全商品）</div>
+          <div class="btnRow">
+            <button class="btn btnPrimary btnWide" id="goShopAll">瀏覽全商品</button>
+          </div>
+        </div>
+      </div>
+
       <div class="section">
         <div class="chips">
           <div class="chip">固定組合不踩雷</div>
@@ -483,13 +498,13 @@
 
     wrap.querySelector("#goBuy").onclick = ()=>go("/buy-yourself");
     wrap.querySelector("#goOnsite").onclick = ()=>go("/onsite-service");
+    wrap.querySelector("#goShopAll").onclick = ()=>go("/shop");
     wrap.querySelector("#goFaq").onclick = ()=>go("/faq");
 
-    // pick ONE "next step" only
     setBottomBar({
-      title:"首頁",
-      meta:"先選路徑",
-      primaryLabel:"我自己烤",
+      title:"小提示",
+      meta:"先選一種走法就好 🙂",
+      primaryLabel:"看推薦方案",
       onPrimary: ()=>go("/buy-yourself")
     });
   }
@@ -519,6 +534,14 @@
             <div class="note"><b>Step 2</b><br/>主菜上場（示意）</div>
             <div class="note"><b>Step 3</b><br/>收尾剛剛好（示意）</div>
           </div>
+        </div>
+      </div>
+
+      <div class="section card">
+        <div class="pad">
+          <div class="kicker">我知道我要什麼</div>
+          <div class="sub" style="margin:6px 0 10px;">想直接挑？全商品都在這裡。</div>
+          <button class="btn btnWide" id="goShopFromBuy">瀏覽全商品</button>
         </div>
       </div>
 
@@ -579,11 +602,12 @@
     });
 
     wrap.querySelector("#goFaq2").onclick = ()=>go("/faq");
+    wrap.querySelector("#goShopFromBuy").onclick = ()=>go("/shop");
 
     setBottomBar({
-      title:"我自己烤",
-      meta:"加入後去結帳",
-      primaryLabel:"前往購物車",
+      title:"小提示",
+      meta:"有喜歡的先放購物車，等等再一起結 🙂",
+      primaryLabel:"看購物車",
       onPrimary: ()=>go("/cart")
     });
   }
@@ -605,7 +629,6 @@
         <div id="svcList"></div>
       </div>
 
-      <!-- NEW: onsite-only LINE helper card (low-key) -->
       <div class="section card">
         <div class="pad">
           <div class="kicker">快速確認（選用）</div>
@@ -629,6 +652,14 @@
         </div>
       </div>
 
+      <div class="section card">
+        <div class="pad">
+          <div class="kicker">我知道我要什麼</div>
+          <div class="sub" style="margin:6px 0 10px;">想直接挑？全商品也可以一次看。</div>
+          <button class="btn btnWide" id="goShopFromOnsite">瀏覽全商品</button>
+        </div>
+      </div>
+
       <div class="section">
         <div class="kicker">常見問題</div>
         <details>
@@ -643,8 +674,8 @@
     `;
     el.appendChild(wrap);
 
-    // NEW: onsite LINE card click
     wrap.querySelector("#goLineHelp").onclick = ()=> window.open(LINE_URL, "_blank");
+    wrap.querySelector("#goShopFromOnsite").onclick = ()=>go("/shop");
 
     const list = wrap.querySelector("#svcList");
     list.innerHTML = state.services.map(s => `
@@ -685,25 +716,40 @@
     });
 
     setBottomBar({
-      title:"來幫我烤",
-      meta:"加入後去結帳",
-      primaryLabel:"前往購物車",
+      title:"小提示",
+      meta:"方案先放購物車，細節可以慢慢看 🙂",
+      primaryLabel:"看購物車",
       onPrimary: ()=>go("/cart")
     });
   }
 
-  function pageComparison(el){
+  function pageShop(el){
     const wrap = document.createElement("div");
     wrap.className="page";
     wrap.innerHTML = `
-      <div class="h1">方案比較</div>
-      <div class="sub">三張卡片（直式堆疊），每張都可直接加入購物車。</div>
-      <div id="cmp"></div>
+      <div class="h1">全商品</div>
+      <div class="sub">知道自己要什麼？直接進來挑就好 🙂</div>
+
+      <div class="section card">
+        <div class="pad">
+          <div class="kicker">我自己烤｜推薦方案</div>
+          <div class="mini" style="margin-top:6px;">固定組合不踩雷，適合想省心的人。</div>
+        </div>
+      </div>
+      <div id="shopSets"></div>
+
+      <div class="section card" style="margin-top:14px;">
+        <div class="pad">
+          <div class="kicker">來幫我烤｜代烤方案</div>
+          <div class="mini" style="margin-top:6px;">你聊天，我們把流程顧好（下單仍在站內完成）。</div>
+        </div>
+      </div>
+      <div id="shopSvcs"></div>
     `;
     el.appendChild(wrap);
 
-    const cmp = wrap.querySelector("#cmp");
-    cmp.innerHTML = state.sets.map(s=>`
+    const shopSets = wrap.querySelector("#shopSets");
+    shopSets.innerHTML = state.sets.map(s => `
       <div class="section card setCard">
         <div class="pad">
           <div class="setTop">
@@ -713,12 +759,10 @@
             </div>
             <div class="price">${money(s.price)}</div>
           </div>
-          <div class="chips">
-            <span class="tag">特色</span>
-            <span class="tag">特色</span>
-            <span class="tag">特色</span>
-          </div>
-          <div class="btnRow" style="margin-top:10px;">
+          <ul>
+            ${s.highlights.map(h=>`<li>${h}</li>`).join("")}
+          </ul>
+          <div class="btnRow">
             <button class="btn btnPrimary" data-add="${s.id}">加入購物車</button>
             <button class="btn" data-detail="${s.id}">看內容</button>
           </div>
@@ -726,14 +770,38 @@
       </div>
     `).join("");
 
-    cmp.querySelectorAll("[data-add]").forEach(btn=>{
+    const shopSvcs = wrap.querySelector("#shopSvcs");
+    shopSvcs.innerHTML = state.services.map(s => `
+      <div class="section card setCard">
+        <div class="pad">
+          <div class="setTop">
+            <div>
+              <div class="setName">${s.name}</div>
+              <div class="muted">適合：${s.best}</div>
+            </div>
+            <div class="price">${money(s.price)}</div>
+          </div>
+          <ul>
+            ${s.highlights.map(h=>`<li>${h}</li>`).join("")}
+          </ul>
+          <div class="btnRow">
+            <button class="btn btnPrimary" data-add="${s.id}">加入購物車</button>
+            <button class="btn" data-detail="${s.id}">看內容</button>
+          </div>
+          <div class="mini">備註：若要先確認檔期／場地，可用右上角 LINE（僅支援，不導購）。</div>
+        </div>
+      </div>
+    `).join("");
+
+    wrap.querySelectorAll("[data-add]").forEach(btn=>{
       btn.onclick = ()=>{
         const id = btn.getAttribute("data-add");
-        const item = state.sets.find(x=>x.id===id);
-        addToCart(item);
+        const item = state.sets.find(x=>x.id===id) || state.services.find(x=>x.id===id);
+        if(item) addToCart(item);
       };
     });
-    cmp.querySelectorAll("[data-detail]").forEach(btn=>{
+
+    wrap.querySelectorAll("[data-detail]").forEach(btn=>{
       btn.onclick = ()=>{
         const id = btn.getAttribute("data-detail");
         go(`/product/${id}`);
@@ -741,9 +809,9 @@
     });
 
     setBottomBar({
-      title:"方案比較",
-      meta:"比較完就下單",
-      primaryLabel:"前往購物車",
+      title:"小提示",
+      meta:"喜歡的先放購物車，等等再一起結 🙂",
+      primaryLabel:"看購物車",
       onPrimary: ()=>go("/cart")
     });
   }
@@ -779,7 +847,6 @@
     el.appendChild(wrap);
     wrap.querySelector("#goContact").onclick = ()=>go("/contact");
 
-    // hide bottom bar on FAQ (focus)
     setBottomBar(null);
   }
 
@@ -812,8 +879,8 @@
     const list = wrap.querySelector("#cartList");
     if(items.length===0){
       list.innerHTML = `<div class="muted">購物車目前沒有商品。</div>
-        <div style="margin-top:10px;"><button class="btn btnWide" id="goShop">回到推薦方案</button></div>`;
-      wrap.querySelector("#goShop").onclick = ()=>go("/buy-yourself");
+        <div style="margin-top:10px;"><button class="btn btnWide" id="goShop">回到全商品</button></div>`;
+      wrap.querySelector("#goShop").onclick = ()=>go("/shop");
       wrap.querySelector("#goCheckout").onclick = ()=>go("/checkout");
       wrap.querySelector("#goCheckout").disabled = true;
       return;
@@ -839,9 +906,9 @@
     wrap.querySelector("#goCheckout").onclick = ()=>go("/checkout");
 
     setBottomBar({
-      title:"購物車",
-      meta:`合計 ${money(cartTotal())}`,
-      primaryLabel:"去結帳",
+      title:"小提示",
+      meta:`目前合計 ${money(cartTotal())}（確認一下就好）`,
+      primaryLabel:"前往結帳",
       onPrimary: ()=>go("/checkout")
     });
   }
@@ -885,7 +952,6 @@
       render();
     };
 
-    // hide bottom bar on Checkout (focus)
     setBottomBar(null);
   }
 
@@ -918,7 +984,7 @@
             ${(item.highlights||["特色","特色","特色"]).map(h=>`<li>${h}</li>`).join("")}
           </ul>
           <button class="btn btnPrimary btnWide" id="add">加入購物車</button>
-          <button class="btn btnWide" style="margin-top:10px;" id="goCompare">前往方案比較</button>
+          <button class="btn btnWide" style="margin-top:10px;" id="goShop">瀏覽全商品</button>
 
           ${item.type==="service" ? `
             <div class="hr"></div>
@@ -941,16 +1007,15 @@
     el.appendChild(wrap);
 
     wrap.querySelector("#add").onclick = ()=>addToCart(item);
-    wrap.querySelector("#goCompare").onclick = ()=>go("/comparison");
+    wrap.querySelector("#goShop").onclick = ()=>go("/shop");
 
-    // onsite product LINE helper
     const go2 = wrap.querySelector("#goLineHelp2");
     if(go2) go2.onclick = ()=> window.open(LINE_URL, "_blank");
 
     setBottomBar({
-      title:"商品頁",
-      meta:"加入後去結帳",
-      primaryLabel:"前往購物車",
+      title:"小提示",
+      meta:"加入後再去結帳就好 🙂",
+      primaryLabel:"看購物車",
       onPrimary: ()=>go("/cart")
     });
   }
@@ -999,7 +1064,7 @@
       ...state.services.map(x=>({label:x.name, go:`/product/${x.id}`, keywords:["onsite","service","plan","quote", "代烤", "方案", x.name.toLowerCase()]})),
       { label:"我自己烤｜LP", go:"/buy-yourself", keywords:["buy", "yourself", "lp", "自己烤"] },
       { label:"來幫我烤｜LP", go:"/onsite-service", keywords:["onsite", "service", "lp", "代烤"] },
-      { label:"方案比較", go:"/comparison", keywords:["compare", "comparison", "比較"] },
+      { label:"全商品", go:"/shop", keywords:["shop","all","catalog","全商品","直接選購","選購"] },
       { label:"常見問題", go:"/faq", keywords:["faq", "question", "問題"] },
       { label:"購物車", go:"/cart", keywords:["cart", "checkout", "購物車", "結帳"] },
     ];
