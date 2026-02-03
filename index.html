@@ -197,31 +197,91 @@
     .twoCol{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
     .note{font-size:12px; color:#444; background:var(--soft); border:1px solid var(--line); border-radius:14px; padding:10px;}
 
-    /* ---- Home hierarchy (hero + light) ---- */
-    .routeCard.hero .imgPh{height:170px;}
-    .routeCard.hero .routeTitle{font-size:18px;}
-    .routeCard.hero .muted{font-size:13px;}
-    .routeCard.hero .btn{height:48px; border-radius:16px;}
-    .routeCard.light{box-shadow: var(--shadow2);}
-    .routeCard.light .imgPh{height:110px;}
+    /* ---- Home hierarchy ---- */
+    .homeHero{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:20px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .homeHeroTop{
+      padding:14px 12px 0;
+    }
+    .heroArt{
+      height:160px;
+      background:linear-gradient(135deg,#e9e9e9,#f7f7f7);
+      border-bottom:1px solid var(--line);
+      display:flex; align-items:center; justify-content:center;
+      color:#888; font-weight:800;
+    }
+    .heroH1{font-size:22px; font-weight:900; line-height:1.2; margin:10px 0 6px;}
+    .heroSub{color:var(--muted); font-size:13px; line-height:1.45; margin:0 0 12px;}
+    .ctaGrid{display:grid; grid-template-columns:1fr; gap:10px; padding:0 12px 14px;}
+    .ctaBtn{
+      height:52px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:#fff;
+      box-shadow: var(--shadow2);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 12px;
+      cursor:pointer;
+    }
+    .ctaBtn strong{font-weight:900;}
+    .ctaBtn .meta{font-size:12px; color:var(--muted); margin-top:2px;}
+    .ctaBtn.primary{
+      background:#111; color:#fff; border-color:#111;
+    }
+    .ctaBtn.primary .meta{color:rgba(255,255,255,.75);}
+    .ctaBtn .arrow{font-weight:900; opacity:.8;}
 
-    /* ---- Addon quick row ---- */
-    .addonGrid{display:flex; flex-direction:column; gap:10px;}
-    .addonItem{
+    /* ---- Quick buy: compact rows ---- */
+    .quickWrap{display:flex; flex-direction:column; gap:10px;}
+    .quickRow{
       background:#fff; border:1px solid var(--line);
       border-radius:16px; box-shadow: var(--shadow2);
       padding:12px;
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
     }
-    .addonName{font-weight:900;}
-    .addonMeta{font-size:12px; color:var(--muted); margin-top:2px;}
-    .addonRight{display:flex; align-items:center; gap:10px;}
-    .addonPrice{font-weight:900; white-space:nowrap;}
-    .addonAdd{
+    .quickTitle{font-weight:900;}
+    .quickMeta{font-size:12px; color:var(--muted); margin-top:2px;}
+    .quickRight{display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end;}
+    .quickPrice{font-weight:900; white-space:nowrap;}
+    .quickAdd{
       height:40px; padding:0 12px; border-radius:999px;
       border:1px solid var(--line); background:#fff; cursor:pointer;
     }
-    .addonAdd.primary{background:#111; color:#fff; border-color:#111;}
+    .quickAdd.primary{background:#111; color:#fff; border-color:#111;}
+
+    /* ---- Onsite precheck ---- */
+    .precheck{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      box-shadow: var(--shadow2);
+      padding:12px;
+    }
+    .checkList{
+      margin:10px 0 0;
+      display:flex; flex-direction:column; gap:8px;
+    }
+    .checkItem{
+      display:flex; gap:10px; align-items:flex-start;
+      padding:10px;
+      border:1px dashed var(--line);
+      border-radius:14px;
+      background:#fafafa;
+      font-size:13px;
+    }
+    .tick{
+      width:22px; height:22px;
+      border-radius:8px;
+      border:1px solid var(--line);
+      background:#fff;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:900;
+    }
 
     /* ---- Footer ---- */
     .footer{
@@ -307,9 +367,9 @@
         </div>
 
         <div class="footerLinks">
-          <div class="footerLink" onclick="location.hash='#/contact'">📍 聯絡方式</div>
-          <div class="footerLink" onclick="location.hash='#/faq'">❓ 常見問題</div>
-          <div class="footerLink" onclick="window.open(LINE_URL,'_blank')">💬 LINE 詢問</div>
+          <div class="footerLink" id="ftContact">📍 聯絡方式</div>
+          <div class="footerLink" id="ftFaq">❓ 常見問題</div>
+          <div class="footerLink" id="ftLine">💬 LINE 詢問</div>
         </div>
 
         <div style="margin-top:6px;">
@@ -373,11 +433,33 @@
 
   function money(n){ return "NT$ " + n.toLocaleString("en-US"); }
 
+  // ---------- LINE helpers (pre-filled message) ----------
+  function buildOnsitePrefill(extraText=""){
+    const t = [
+      "我想詢問到府代烤，先提供基本資訊：",
+      "1) 日期：",
+      "2) 地點（地址/民宿名）：",
+      "3) 預估人數：",
+      "4) 場地：□戶外 □室內（可烤）",
+      "5) 插座：□有 □無",
+      "6) 遮雨：□有 □無",
+      "7) 其他限制（動線/禁明火/時間）：",
+      "",
+      "想了解：適合的代烤方案 + 需要準備什麼"
+    ];
+    if(extraText) t.push("", extraText);
+    return t.join("\n");
+  }
+  function openLineWithPrefill(msg){
+    const url = LINE_URL + (LINE_URL.includes("?") ? "&" : "?") + "text=" + encodeURIComponent(msg);
+    window.open(url, "_blank");
+  }
+
   function addToCart(item){
     // 代烤不進購物車（只看內容 + LINE 確認）
     if(item.type === "service"){
       toast("代烤請先用 LINE 確認");
-      window.open(LINE_URL, "_blank");
+      openLineWithPrefill(buildOnsitePrefill(`我想看的是：${item.name}`));
       return;
     }
     const found = state.cart.find(x => x.id === item.id);
@@ -451,7 +533,7 @@
   const drawer = document.getElementById("drawer");
   const backdrop = document.getElementById("backdrop");
 
-  btnLine.onclick = ()=> window.open(LINE_URL, "_blank");
+  btnLine.onclick = ()=> openLineWithPrefill(buildOnsitePrefill());
 
   function render(){
     const { path, params } = parseRoute();
@@ -471,44 +553,75 @@
     const wrap = document.createElement("div");
     wrap.className="page";
 
+    // pick top 3 sets + 3 addons for quick actions (stable for now)
+    const topSets = state.sets.slice(0,3);
+    const topAddons = state.addons.slice(0,3);
+
     wrap.innerHTML = `
-      <div class="h1">烤肉這件事，交給我們就好</div>
-      <div class="sub">食材整組配好，自己烤或請人來烤都行</div>
+      <!-- 1) HERO: dual main CTA -->
+      <div class="homeHero">
+        <div class="heroArt">主視覺 / 情境圖</div>
+        <div class="homeHeroTop">
+          <div class="heroH1">烤肉這件事，交給我們就好</div>
+          <div class="heroSub">食材整組配好｜要代烤也可以先確認檔期與場地</div>
+        </div>
+        <div class="ctaGrid">
+          <button class="ctaBtn primary" id="ctaBuy">
+            <div>
+              <strong>我要買食材</strong>
+              <div class="meta">直接選購｜方案＋單點</div>
+            </div>
+            <div class="arrow">→</div>
+          </button>
+          <button class="ctaBtn" id="ctaOnsite">
+            <div>
+              <strong>我要代烤</strong>
+              <div class="meta">先用 LINE 確認｜檔期／場地</div>
+            </div>
+            <div class="arrow">→</div>
+          </button>
+        </div>
+      </div>
 
-      <div class="section card routeCard hero">
-        <div class="imgPh">情境圖</div>
+      <!-- 2) Quick buy: sets + addons -->
+      <div class="section">
+        <div class="kicker">第二屏｜直接買（不用研究怎麼配）</div>
+        <div class="mini" style="margin-top:6px;">先挑方案，再看要不要加香腸/玉米/蝦。</div>
+      </div>
+
+      <div class="section">
+        <div class="quickWrap" id="quickSets"></div>
+      </div>
+
+      <div class="section card">
         <div class="pad">
-          <div class="routeTitle">瀏覽全商品</div>
-          <div class="muted">方案＋單點都在這裡（直接選購）</div>
-          <div class="btnRow">
-            <button class="btn btnPrimary btnWide" id="goShop">直接進去選購</button>
+          <div class="kicker">常加單點（快速加購）</div>
+          <div class="mini" style="margin-top:6px;">缺什麼補什麼，按一下就進購物車。</div>
+          <div style="margin-top:10px;" class="quickWrap" id="quickAddons"></div>
+          <div style="margin-top:10px;">
+            <button class="btn btnWide" id="goShopAll">看更多（全商品）</button>
           </div>
         </div>
       </div>
 
-      <div class="section card routeCard light">
-        <div class="imgPh">情境圖</div>
-        <div class="pad">
-          <div class="routeTitle">我自己烤</div>
-          <div class="muted">先看推薦方案（去 LP）</div>
-          <div class="btnRow">
-            <button class="btn btnPrimary btnWide" id="goBuy">看推薦方案</button>
-          </div>
+      <!-- 3) Onsite pre-check -->
+      <div class="section">
+        <div class="kicker">第三屏｜要代烤？先確認 3 件事（預篩選）</div>
+      </div>
+      <div class="precheck">
+        <div class="mini">這樣我們回覆會更快，也能直接建議適合的方案。</div>
+        <div class="checkList">
+          <div class="checkItem"><div class="tick">✓</div><div><b>日期 / 地點 / 人數</b><div class="mini">先給基本資訊，省來回</div></div></div>
+          <div class="checkItem"><div class="tick">✓</div><div><b>插座 & 遮雨</b><div class="mini">有沒有插座、是否能遮雨</div></div></div>
+          <div class="checkItem"><div class="tick">✓</div><div><b>場地限制</b><div class="mini">動線、禁明火、時間限制等</div></div></div>
+        </div>
+        <div style="margin-top:10px;">
+          <button class="btn btnPrimary btnWide" id="goOnsitePrefill">用 LINE 快速確認（帶資料範本）</button>
+          <button class="btn btnWide" style="margin-top:10px;" id="goOnsiteLP">我想先看代烤方案內容</button>
         </div>
       </div>
 
-      <div class="section card routeCard light">
-        <div class="imgPh">情境圖</div>
-        <div class="pad">
-          <div class="routeTitle">來幫我烤</div>
-          <div class="muted">代烤先用 LINE 確認檔期／場地</div>
-          <div class="btnRow">
-            <button class="btn btnPrimary btnWide" id="goOnsiteLine">用 LINE 快速確認</button>
-          </div>
-          <div class="mini">想先看方案內容：左上角選單 → 來幫我烤</div>
-        </div>
-      </div>
-
+      <!-- Support / chips -->
       <div class="section">
         <div class="chips">
           <div class="chip">固定組合不踩雷</div>
@@ -517,6 +630,7 @@
         </div>
       </div>
 
+      <!-- Mini FAQ -->
       <div class="section">
         <details open>
           <summary>常見問題（精簡）</summary>
@@ -529,9 +643,68 @@
 
     el.appendChild(wrap);
 
-    wrap.querySelector("#goBuy").onclick = ()=>go("/buy-yourself");
-    wrap.querySelector("#goOnsiteLine").onclick = ()=> window.open(LINE_URL, "_blank");
-    wrap.querySelector("#goShop").onclick = ()=>go("/shop");
+    // fill quick sets
+    const quickSets = wrap.querySelector("#quickSets");
+    quickSets.innerHTML = topSets.map(s=>`
+      <div class="quickRow">
+        <div>
+          <div class="quickTitle">${s.name}</div>
+          <div class="quickMeta">適合：${s.best}</div>
+        </div>
+        <div class="quickRight">
+          <div class="quickPrice">${money(s.price)}</div>
+          <button class="quickAdd primary" data-add="${s.id}">加入</button>
+          <button class="quickAdd" data-detail="${s.id}">內容</button>
+        </div>
+      </div>
+    `).join("");
+
+    // fill quick addons
+    const quickAddons = wrap.querySelector("#quickAddons");
+    quickAddons.innerHTML = topAddons.map(a=>`
+      <div class="quickRow">
+        <div>
+          <div class="quickTitle">${a.name}</div>
+          <div class="quickMeta">${a.best}</div>
+        </div>
+        <div class="quickRight">
+          <div class="quickPrice">${money(a.price)}</div>
+          <button class="quickAdd primary" data-addon="${a.id}">＋ 加購</button>
+          <button class="quickAdd" data-detail="${a.id}">內容</button>
+        </div>
+      </div>
+    `).join("");
+
+    // bind: hero CTAs
+    wrap.querySelector("#ctaBuy").onclick = ()=>go("/shop");
+    wrap.querySelector("#ctaOnsite").onclick = ()=> openLineWithPrefill(buildOnsitePrefill());
+
+    // bind: quick set add/detail
+    wrap.querySelectorAll("[data-add]").forEach(btn=>{
+      btn.onclick = ()=>{
+        const id = btn.getAttribute("data-add");
+        const item = state.sets.find(x=>x.id===id);
+        if(item) addToCart(item);
+      };
+    });
+    wrap.querySelectorAll("[data-addon]").forEach(btn=>{
+      btn.onclick = ()=>{
+        const id = btn.getAttribute("data-addon");
+        const item = state.addons.find(x=>x.id===id);
+        if(item) addToCart(item);
+      };
+    });
+    wrap.querySelectorAll("[data-detail]").forEach(btn=>{
+      btn.onclick = ()=>{
+        const id = btn.getAttribute("data-detail");
+        go(`/product/${id}`);
+      };
+    });
+
+    // bind: other buttons
+    wrap.querySelector("#goShopAll").onclick = ()=>go("/shop");
+    wrap.querySelector("#goOnsitePrefill").onclick = ()=> openLineWithPrefill(buildOnsitePrefill());
+    wrap.querySelector("#goOnsiteLP").onclick = ()=>go("/onsite-service");
     wrap.querySelector("#goFaq").onclick = ()=>go("/faq");
   }
 
@@ -620,19 +793,19 @@
       </div>
     `).join("");
 
-    // Addon quick rows
     const addonQuick = wrap.querySelector("#addonQuick");
     addonQuick.innerHTML = `
-      <div class="addonGrid">
+      <div class="quickWrap">
         ${state.addons.map(a=>`
-          <div class="addonItem">
+          <div class="quickRow">
             <div>
-              <div class="addonName">${a.name}</div>
-              <div class="addonMeta">${a.best}</div>
+              <div class="quickTitle">${a.name}</div>
+              <div class="quickMeta">${a.best}</div>
             </div>
-            <div class="addonRight">
-              <div class="addonPrice">${money(a.price)}</div>
-              <button class="addonAdd primary" data-addon="${a.id}">＋ 加購</button>
+            <div class="quickRight">
+              <div class="quickPrice">${money(a.price)}</div>
+              <button class="quickAdd primary" data-addon="${a.id}">＋ 加購</button>
+              <button class="quickAdd" data-detail="${a.id}">內容</button>
             </div>
           </div>
         `).join("")}
@@ -649,19 +822,17 @@
         if(item) addToCart(item);
       };
     });
-
-    list.querySelectorAll("[data-detail]").forEach(btn=>{
-      btn.onclick = ()=>{
-        const id = btn.getAttribute("data-detail");
-        go(`/product/${id}`);
-      };
-    });
-
-    addonQuick.querySelectorAll("[data-addon]").forEach(btn=>{
+    wrap.querySelectorAll("[data-addon]").forEach(btn=>{
       btn.onclick = ()=>{
         const id = btn.getAttribute("data-addon");
         const item = state.addons.find(x=>x.id===id);
         if(item) addToCart(item);
+      };
+    });
+    wrap.querySelectorAll("[data-detail]").forEach(btn=>{
+      btn.onclick = ()=>{
+        const id = btn.getAttribute("data-detail");
+        go(`/product/${id}`);
       };
     });
 
@@ -681,15 +852,16 @@
         </div>
       </div>
 
-      <div class="section card">
-        <div class="pad">
-          <div class="kicker">快速確認（建議先做）</div>
-          <div class="sub" style="margin:6px 0 10px;">
-            先確認檔期／場地限制，我們會回你可行方案與建議。
-          </div>
-          <button class="btn btnPrimary btnWide" id="goLineHelp">用 LINE 快速確認</button>
-          <div class="mini" style="margin-top:8px;">備註：代烤方案不加入購物車。</div>
+      <div class="section precheck">
+        <div class="kicker">預篩選（先看這 3 件事）</div>
+        <div class="mini" style="margin-top:6px;">先確認場地條件，我們才能直接判斷可行與建議方案。</div>
+        <div class="checkList">
+          <div class="checkItem"><div class="tick">✓</div><div><b>日期 / 地點 / 人數</b><div class="mini">最少要有這三個</div></div></div>
+          <div class="checkItem"><div class="tick">✓</div><div><b>插座 & 遮雨</b><div class="mini">影響可行性與流程</div></div></div>
+          <div class="checkItem"><div class="tick">✓</div><div><b>限制條件</b><div class="mini">禁明火、動線、時段等</div></div></div>
         </div>
+        <button class="btn btnPrimary btnWide" style="margin-top:10px;" id="goLineHelp">用 LINE 快速確認（帶資料範本）</button>
+        <div class="mini" style="margin-top:8px;">備註：代烤方案不加入購物車。</div>
       </div>
 
       <div class="section">
@@ -723,7 +895,7 @@
     `;
     el.appendChild(wrap);
 
-    wrap.querySelector("#goLineHelp").onclick = ()=> window.open(LINE_URL, "_blank");
+    wrap.querySelector("#goLineHelp").onclick = ()=> openLineWithPrefill(buildOnsitePrefill());
 
     const list = wrap.querySelector("#svcList");
     list.innerHTML = state.services.map(s => `
@@ -752,9 +924,12 @@
         go(`/product/${id}`);
       };
     });
-
     list.querySelectorAll("[data-line]").forEach(btn=>{
-      btn.onclick = ()=> window.open(LINE_URL, "_blank");
+      btn.onclick = ()=>{
+        const id = btn.getAttribute("data-line");
+        const svc = state.services.find(x=>x.id===id);
+        openLineWithPrefill(buildOnsitePrefill(`我想看的是：${svc ? svc.name : "代烤方案"}`));
+      };
     });
   }
 
@@ -811,19 +986,19 @@
       </div>
     `).join("");
 
-    // Addons as quick rows (not as big set cards)
     const shopAddons = wrap.querySelector("#shopAddons");
     shopAddons.innerHTML = `
-      <div class="addonGrid">
+      <div class="quickWrap">
         ${state.addons.map(a=>`
-          <div class="addonItem">
+          <div class="quickRow">
             <div>
-              <div class="addonName">${a.name}</div>
-              <div class="addonMeta">${a.best}</div>
+              <div class="quickTitle">${a.name}</div>
+              <div class="quickMeta">${a.best}</div>
             </div>
-            <div class="addonRight">
-              <div class="addonPrice">${money(a.price)}</div>
-              <button class="addonAdd primary" data-addon="${a.id}">＋ 加購</button>
+            <div class="quickRight">
+              <div class="quickPrice">${money(a.price)}</div>
+              <button class="quickAdd primary" data-addon="${a.id}">＋ 加購</button>
+              <button class="quickAdd" data-detail="${a.id}">內容</button>
             </div>
           </div>
         `).join("")}
@@ -869,7 +1044,7 @@
       };
     });
 
-    // bind: details (sets + services)
+    // bind: details (sets + services + addons)
     wrap.querySelectorAll("[data-detail]").forEach(btn=>{
       btn.onclick = ()=>{
         const id = btn.getAttribute("data-detail");
@@ -879,7 +1054,11 @@
 
     // bind: services LINE
     wrap.querySelectorAll("[data-line]").forEach(btn=>{
-      btn.onclick = ()=> window.open(LINE_URL, "_blank");
+      btn.onclick = ()=>{
+        const id = btn.getAttribute("data-line");
+        const svc = state.services.find(x=>x.id===id);
+        openLineWithPrefill(buildOnsitePrefill(`我想看的是：${svc ? svc.name : "代烤方案"}`));
+      };
     });
   }
 
@@ -1050,7 +1229,7 @@
           ${
             isService
               ? `
-                <button class="btn btnPrimary btnWide" id="goLineHelp2">用 LINE 快速確認</button>
+                <button class="btn btnPrimary btnWide" id="goLineHelp2">用 LINE 快速確認（帶資料範本）</button>
                 <button class="btn btnWide" style="margin-top:10px;" id="goOnsite">回到來幫我烤</button>
                 <div class="mini" style="margin-top:10px;">備註：代烤先確認檔期／場地，避免結帳流程被打斷。</div>
               `
@@ -1071,7 +1250,7 @@
     el.appendChild(wrap);
 
     if(isService){
-      wrap.querySelector("#goLineHelp2").onclick = ()=> window.open(LINE_URL, "_blank");
+      wrap.querySelector("#goLineHelp2").onclick = ()=> openLineWithPrefill(buildOnsitePrefill(`我想看的是：${item.name}`));
       wrap.querySelector("#goOnsite").onclick = ()=> go("/onsite-service");
     }else{
       wrap.querySelector("#add").onclick = ()=>addToCart(item);
@@ -1108,10 +1287,14 @@
             <span class="chip">Facebook</span>
           </div>
           <div class="mini" style="margin-top:10px;">提醒：食材走站內結帳；代烤走 LINE 先確認。</div>
+          <div style="margin-top:10px;">
+            <button class="btn btnWide" id="contactLine">用 LINE 詢問</button>
+          </div>
         </div>
       </div>
     `;
     el.appendChild(wrap);
+    wrap.querySelector("#contactLine").onclick = ()=> openLineWithPrefill(buildOnsitePrefill());
   }
 
   // ---------- Search ----------
@@ -1196,6 +1379,14 @@
     const count = state.cart.reduce((s,x)=>s+x.qty,0);
     btnCart.title = `購物車（${count}）`;
   }
+
+  // Footer binds (no inline JS dependency)
+  const ftContact = document.getElementById("ftContact");
+  const ftFaq = document.getElementById("ftFaq");
+  const ftLine = document.getElementById("ftLine");
+  if(ftContact) ftContact.onclick = ()=>{ location.hash = "#/contact"; };
+  if(ftFaq) ftFaq.onclick = ()=>{ location.hash = "#/faq"; };
+  if(ftLine) ftLine.onclick = ()=>{ openLineWithPrefill(buildOnsitePrefill()); };
 
   // ---------- Init ----------
   buildSearchIndex();
