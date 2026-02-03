@@ -222,6 +222,53 @@
       border:1px solid var(--line); background:#fff; cursor:pointer;
     }
     .addonAdd.primary{background:#111; color:#fff; border-color:#111;}
+
+    /* ---- Footer ---- */
+    .footer{
+      margin-top: 10px;
+      padding: 14px 12px 22px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+    .footerInner{
+      max-width: var(--max);
+      margin: 0 auto;
+      display: grid;
+      gap: 10px;
+    }
+    .footerBrand{
+      font-weight: 900;
+      color: #222;
+      letter-spacing: .2px;
+    }
+    .footerRow{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      align-items: center;
+    }
+    .footerDot{opacity:.6}
+    .footerLinks{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:4px;
+    }
+    .footerLink{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:8px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:#fff;
+      box-shadow: var(--shadow2);
+      color:#333;
+      cursor:pointer;
+      user-select:none;
+    }
   </style>
 </head>
 <body>
@@ -239,6 +286,37 @@
     </div>
 
     <main id="appRoot"></main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footerInner">
+        <div class="footerBrand">名根烤肉</div>
+
+        <div class="footerRow">
+          <span>公司／商號：名根烤肉（示意）</span><span class="footerDot">•</span>
+          <span>統編：XXXXXXXX（示意）</span>
+        </div>
+
+        <div class="footerRow">
+          <span>電話：09XX-XXX-XXX（示意）</span><span class="footerDot">•</span>
+          <span>Email：service@xxxx.com（示意）</span>
+        </div>
+
+        <div class="footerRow">
+          <span>地址：新北市＿＿區＿＿路＿＿號（示意）</span>
+        </div>
+
+        <div class="footerLinks">
+          <div class="footerLink" onclick="location.hash='#/contact'">📍 聯絡方式</div>
+          <div class="footerLink" onclick="location.hash='#/faq'">❓ 常見問題</div>
+          <div class="footerLink" onclick="window.open(LINE_URL,'_blank')">💬 LINE 詢問</div>
+        </div>
+
+        <div style="margin-top:6px;">
+          © <span id="yy"></span> 名根烤肉 All Rights Reserved.
+        </div>
+      </div>
+    </footer>
 
     <!-- Drawer -->
     <div class="backdrop" id="backdrop"></div>
@@ -912,11 +990,6 @@
             <span class="chip">選項</span>
             <span class="chip">選項</span>
           </div>
-          <div class="kicker" style="margin-top:12px;">公司基本資料</div>
-          <div class="field"><input placeholder="公司名稱" /></div>
-          <div class="field"><input placeholder="統一編號" /></div>
-          <div class="field"><input placeholder="公司地址" /></div>
-          <div class="field"><input placeholder="聯絡人 / 職稱" /></div>
           <div class="hr"></div>
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <div class="kicker">合計</div>
@@ -1129,6 +1202,8 @@
   window.addEventListener("hashchange", render);
   if(!location.hash) location.hash = "#/home";
   render();
+  const yy = document.getElementById("yy");
+  if(yy) yy.textContent = new Date().getFullYear();
 </script>
 </body>
 </html>
